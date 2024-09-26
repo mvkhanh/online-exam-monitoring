@@ -1,27 +1,35 @@
 package PBL4;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.ArrayList;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
 class CreateRoomProc extends Thread {
-	private ArrayList<String> joins = new ArrayList<String>();
-	private DatagramSocket soc;
+	private static DatagramSocket soc;
 	private InetAddress address;
 	private Integer port;
 	private DatagramPacket imagePacket = null;
-	private int idRoom;
-	private Map<String, Integer> mp = new HashMap<>();
-	private static int idJoin = 0;
+	private int roomId;
+	private Map<String, Integer> joiners = new HashMap<>();
+	private int idJoin = 0;
 	
-	public CreateRoomProc(DatagramSocket soc, DatagramPacket packet, int id) {
-		this.soc = soc;
+	public CreateRoomProc(DatagramPacket packet, int id) throws SocketException {
+		if(soc == null) soc = new DatagramSocket(9876);
 		this.address = packet.getAddress();
 		this.port = packet.getPort();
-		this.idRoom = id;
+		this.roomId = id; // Co the khong can 
+		//Gui roomId ve cho teacher
+		byte[] data = String.valueOf(roomId).getBytes();
+		try {
+			soc.send(new DatagramPacket(data, data.length, address, port));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Lỗi khi gửi roomId ve teacher");
+		}
 	}
 
 	@Override
@@ -29,30 +37,45 @@ class CreateRoomProc extends Thread {
 		while(true) {
 			try {				
 				if(imagePacket != null) {
-					String student_address = imagePacket.getAddress().toString() + String.valueOf(imagePacket.getPort());
-					byte[] data = imagePacket.getData();
-					if(!mp.containsKey(student_address)) mp.put(student_address, idJoin++);
-					byte[] msg = ("Student " + mp.get(student_address).toString()).getBytes();
-					DatagramPacket packet = new DatagramPacket(msg, msg.length, address, port);
-					soc.send(packet);
-					packet.setData(data);
-					packet.setLength(data.length);
-					soc.send(packet);
+					String student_address = imagePacket.getAddress().toString() + " " + String.valueOf(imagePacket.getPort());
+					
+					byte[] image = new String(imagePacket.getData(), 0, imagePacket.getLength()).strip().split(" ")[2].getBytes();
+					//Thong diep se co dang:"I studentId image". Phia teacher se lay ra image va cap nhat vao o studentId
+					byte[] msg = ("I " + joiners.get(student_address).toString() + " ").getBytes();
+					byte[] data = combineArrays(msg, image);
+					soc.send(new DatagramPacket(data, data.length, address, port));
 					imagePacket = null;
 				}
 			}
 			catch(Exception e) {
-				
+				System.out.println("loi khi gui anh");
 			}
 		}
 	}
 	
-	public ArrayList<String> getJoins() {
-		return joins;
+	public void addJoiner(String student_address) {
+		if(!joiners.containsKey(student_address)) joiners.put(student_address, idJoin++);
+	}
+	
+	private static byte[] combineArrays(byte[] array1, byte[] array2) {
+        // Khởi tạo mảng mới với kích thước là tổng của hai mảng
+        byte[] combined = new byte[array1.length + array2.length];
+
+        // Sao chép phần tử từ mảng đầu tiên vào mảng gộp
+        System.arraycopy(array1, 0, combined, 0, array1.length);
+        
+        // Sao chép phần tử từ mảng thứ hai vào mảng gộp
+        System.arraycopy(array2, 0, combined, array1.length, array2.length);
+
+        return combined;
+    }
+
+	public Map<String, Integer> getJoiners() {
+		return joiners;
 	}
 
-	public void setJoins(ArrayList<String> joins) {
-		this.joins = joins;
+	public void setJoiners(Map<String, Integer> joiners) {
+		this.joiners = joiners;
 	}
 
 	public DatagramSocket getSoc() {
@@ -87,12 +110,12 @@ class CreateRoomProc extends Thread {
 		this.port = port;
 	}
 
-	public int getIdRoom() {
-		return idRoom;
+	public int getRoomId() {
+		return roomId;
 	}
 
-	public void setIdRoom(int id) {
-		this.idRoom = id;
+	public void setRoomId(int id) {
+		this.roomId = id;
 	}
 
 }

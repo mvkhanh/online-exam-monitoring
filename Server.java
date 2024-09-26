@@ -15,29 +15,33 @@ public class Server {
 				byte[] receiveData = new byte[1024];
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
-				String msg = new String(receivePacket.getData(), 0, receivePacket.getLength());
+				String msg = new String(receivePacket.getData(), 0, 1);
 				//create room
 				if(msg.equals("C")) {
-					CreateRoomProc createRoomProc = new CreateRoomProc(serverSocket, receivePacket, id++);
+					CreateRoomProc createRoomProc = new CreateRoomProc(receivePacket, id++);
 					rooms.add(createRoomProc);
 					createRoomProc.start();
 				}
-				//join room
+				//join room: "J 12345"
 				else if(msg.contains("J")) {
-					int roomId = Integer.parseInt(msg.strip().split(" ")[2]);
+					int roomId = Integer.parseInt(new String(receivePacket.getData(), 1, 30).strip());
 					for(CreateRoomProc room : rooms) {
-						if(room.getIdRoom() == roomId) {
-							String idStudent = receivePacket.getAddress().toString() + String.valueOf(receivePacket.getPort());
-							room.getJoins().add(idStudent);
+						if(room.getRoomId() == roomId) {
+							String idStudent = receivePacket.getAddress().toString() + " " + String.valueOf(receivePacket.getPort());
+							room.addJoiner(idStudent);
+							//
+							break;
 						}
 					}
 				} 
-				//image
+				//image: S roomId image. Vd: S 12345 ...
 				else if(msg.contains("S")) {
-					int roomId = Integer.parseInt(msg.strip().split(" ")[2]);
+					String[] data = new String(receivePacket.getData(), 1, 30).strip().split(" ");
+					int roomId = Integer.parseInt(data[0]);
 					for(CreateRoomProc room : rooms) {
-						if(room.getIdRoom() == roomId) {
+						if(room.getRoomId() == roomId) {
 							room.setImagePacket(receivePacket);
+							break;
 						}
 					}
 				}
@@ -45,7 +49,7 @@ public class Server {
 					
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				System.out.println("loi khi server nhan du lieu");
 			}
 		}
 	}
