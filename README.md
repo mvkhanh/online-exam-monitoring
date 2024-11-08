@@ -1,6 +1,6 @@
 Các bước clone về máy:
 B1: Mở terminal trong Eclipse hoặc Intelij tại thư mục muốn chứa project
-B2: git clone 
+B2: git clone https://github.com/mvkhanh/pbl4
 B3: Di chuyển vào thư mục: cd PBL4
 
 Cách pull code về:
