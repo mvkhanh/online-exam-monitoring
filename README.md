@@ -2,7 +2,7 @@
 B1: Mở terminal trong Eclipse hoặc Intelij tại thư mục src của project  
 B2: git clone https://github.com/mvkhanh/pbl4 pbl4  
 B3: Di chuyển vào thư mục: cd pbl4  
-B4: Chuyển vào branch mới nhất: git checkout <branch name>  
+B4: Chuyển vào branch mới nhất: git checkout (branch name)  
   
 **Cách pull code về:**  
 git pull origin <branch name>  
