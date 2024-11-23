@@ -19,3 +19,6 @@ Lệnh chuyển qua branch khác: git checkout (branch name)
 Lệnh xoá branch: git branch -d (branch name)  
   
 Làm thì tạo 1 branch riêng, code xong push branch đó lên  
+
+**OpenCV Eclipse:**  
+https://www.youtube.com/watch?v=NUQc7-dYIxA
