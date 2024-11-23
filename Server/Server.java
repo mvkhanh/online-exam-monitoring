@@ -18,7 +18,7 @@ import pbl4.Server.DTO.Room;
 public class Server {
 	public static Map<Integer, Room> rooms = new ConcurrentHashMap<>();
 	public static final long TIMEOUT = 10000;
-	public static String FILE_LOCATION = "Data"; // Thư mục của project/id participant
+	public static String FILE_LOCATION = "Data";
 
 	public static void main(String[] args) {
 		new Thread(new TCPServer()).start();

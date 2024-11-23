@@ -98,6 +98,10 @@ public class TCPHandler implements Runnable {
 			case 'K': //Lay file ban phim cua participant ve cho teacher xem
 				getKeys(message.substring(1), output);
 				break;
+				
+			case 'Q': //Teacher bam nut ket thuc
+				endStream(message);
+				break;
 			default:
 				break;
 			}
@@ -308,5 +312,9 @@ public class TCPHandler implements Runnable {
 		String filePath = Server.FILE_LOCATION + File.separator + "Keyboard" + File.separator + participant_id + ".txt";
 		String s = Files.readString(Paths.get(filePath));
 		dos.writeUTF(s);
+	}
+	
+	private void endStream(String message) {
+		Server.rooms.remove(Integer.valueOf(message.substring(1)));
 	}
 }

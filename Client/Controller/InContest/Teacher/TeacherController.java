@@ -42,6 +42,12 @@ public class TeacherController extends InContestBaseController{
 	
 	public void endStream() {
 		running = false;
+		try (Socket tcpSocket = new Socket(serverAddress, tcpPort);
+				DataOutputStream dos = new DataOutputStream(tcpSocket.getOutputStream())) {
+			dos.writeUTF("Q" + roomId);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		view.dispose();
 		outcontestController.view.setVisible(true);
 	}

@@ -130,5 +130,4 @@ public class TeacherController extends BaseController {
 			ex.printStackTrace();
 		}
 	}
-
 }
