@@ -36,17 +36,13 @@ public class TeacherController extends InContestBaseController{
 		this.roomId = roomId;
 		this.udpSocket = udpSocket;
 		view = new Teacher(this);
-		threads.add(new ReceiveThread(this));
-		threads.getLast().start();
-		threads.add(new LiveThread(this));
-		threads.getLast().start();
+		new ReceiveThread(this).start();
+		new LiveThread(this).start();
 	}
 	
 	public void endStream() {
+		running = false;
 		view.dispose();
-//		for(Thread thread : threads) {
-////			thread.stop();
-//		}
 		outcontestController.view.setVisible(true);
 	}
 	

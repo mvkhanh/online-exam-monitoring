@@ -23,14 +23,14 @@ public class CaptureThread extends Thread {
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
-		while (true) {
+		while (par.running) {
 			ImageModel tmp = par.imgModel;
 			BufferedImage fullImage = r.createScreenCapture(capture);
 			tmp.g2d.drawImage(fullImage, 0, 0, tmp.img.getWidth(), tmp.img.getHeight(), null);
 		}
 //		MH: 42763100
 //		Cam: 2292900
-		
+
 //		MH: 4251500
 //		Cam: 2135300
 	}

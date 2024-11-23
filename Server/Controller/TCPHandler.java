@@ -2,10 +2,14 @@ package pbl4.Server.Controller;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +24,6 @@ import pbl4.Server.DTO.Room;
 import pbl4.Server.Entity.Participant;
 import pbl4.Server.Entity.Test;
 import pbl4.Server.Utils.Service;
-
 
 public class TCPHandler implements Runnable {
 	private Socket socket;
@@ -57,40 +60,43 @@ public class TCPHandler implements Runnable {
 				if (!texting(message))
 					output.writeUTF("Q");
 				break;
-				
+
 			case 'S':
 				checkStudent(message, output);
 				break;
-				
+
 			case 'T':
 				checkTeacher(message, output);
 				break;
-				
+
 			case '!': // !<roomId> <...>
 				takeKeys(message);
 				message = input.readUTF();
 				checkStudent(message, output);
 				break;
-				
+
 			case 'E':
 				handleListTestRequest(message, output);
 				break;
-				
+
 			case 'P':
 				handleListParticipant(message, output);
 				break;
-				
-			// login : "L,username,password"
-			case 'L':
+			
+			case 'L': // login : "L,username,password"
 				handleLogin(message, output);
 				break;
-			// register : "R,username,password"
-			case 'R':
+				
+			case 'R': // register : "R,username,password"
 				handleRegister(message, output);
 				break;
-			// user update
-			case 'U':
+			
+			case 'U': // user update
 				handleUpdateUserRequest(message);
+				break;
+				
+			case 'K': //Lay file ban phim cua participant ve cho teacher xem
+				getKeys(message.substring(1), output);
 				break;
 			default:
 				break;
@@ -134,8 +140,8 @@ public class TCPHandler implements Runnable {
 			room.getForFocus().put(studentNum * 2 + 1, studentId * 2 + 1);
 			room.getNames().add(Map.entry(studentNum, msg.substring(j + 1)));
 			output.writeUTF("Y" + studentId + " " + room.getTeachername());
-		}
-		else output.writeUTF("N");
+		} else
+			output.writeUTF("N");
 	}
 
 	private void focus(String[] msges) {
@@ -158,75 +164,74 @@ public class TCPHandler implements Runnable {
 		}
 		return false;
 	}
-	
-	private void checkStudent(String message, DataOutputStream dos) throws Exception{
+
+	private void checkStudent(String message, DataOutputStream dos) throws Exception {
 		int i = message.indexOf(" ");
 		int j = message.indexOf(" ", i + 1);
 		int roomId = Integer.valueOf(message.substring(1, i));
 		Room room = Server.rooms.get(roomId);
 		if (room != null) {
-			int studentId =	Integer.parseInt(message.substring(i + 1, j));
+			int studentId = Integer.parseInt(message.substring(i + 1, j));
 			int msgNum = Integer.parseInt(message.substring(j + 1));
 			room.getStudents().get(studentId).setTime(System.currentTimeMillis());
-			
-			if(studentId * 2 == room.getFocusAddress()) {
+
+			if (studentId * 2 == room.getFocusAddress()) {
 				dos.writeUTF("H1");
-			}
-			else if(studentId * 2 + 1 == room.getFocusAddress()) {
+			} else if (studentId * 2 + 1 == room.getFocusAddress()) {
 				dos.writeUTF("H2");
-			}
-			else dos.writeUTF("~H");
+			} else
+				dos.writeUTF("~H");
 			ArrayList<String> chatHistory = room.getChatHistory();
-			while(msgNum < chatHistory.size()) {
+			while (msgNum < chatHistory.size()) {
 				dos.writeUTF("M" + chatHistory.get(msgNum));
 				msgNum++;
 			}
-		}
-		//Q neu teacher da thoat
-		dos.writeUTF("E");
+			dos.writeUTF("E");
+		} else
+			dos.writeUTF("Q");
 	}
-	
-	private void checkTeacher(String msg, DataOutputStream dos) throws Exception{
+
+	private void checkTeacher(String msg, DataOutputStream dos) throws Exception {
 		int i = msg.indexOf(" ");
 		int roomId = Integer.valueOf(msg.substring(1, i));
 		Room room = Server.rooms.get(roomId);
 		if (room != null) {
 			int msgNum = Integer.parseInt(msg.substring(i + 1));
 			room.getTeacher().setTime(System.currentTimeMillis());
-			
-			while(!room.getNames().isEmpty()) {
+
+			while (!room.getNames().isEmpty()) {
 				Map.Entry<Integer, String> entry = room.getNames().poll();
 				dos.writeUTF("N" + entry.getKey() + " " + entry.getValue());
 			}
-			
-			while(!room.getQuittedStudents().isEmpty()) {
+
+			while (!room.getQuittedStudents().isEmpty()) {
 				Integer quit = room.getQuittedStudents().poll();
 				dos.writeUTF("D" + quit);
 			}
-			
+
 			ArrayList<String> chatHistory = room.getChatHistory();
-			while(msgNum < chatHistory.size()) {
+			while (msgNum < chatHistory.size()) {
 				dos.writeUTF("M" + chatHistory.get(msgNum));
 				msgNum++;
 			}
-			while(!room.getKeys().isEmpty()) {
+			while (!room.getKeys().isEmpty()) {
 				dos.writeUTF("K" + room.getKeys().poll());
 			}
 		}
 		dos.writeUTF("E");
 	}
-	
+
 	private void takeKeys(String msg) {
 		int i = msg.indexOf(" ");
 		int j = msg.indexOf(" ", i + 1);
 		int roomId = Integer.valueOf(msg.substring(1, i));
 		Room room = Server.rooms.get(roomId);
-		if(room != null) {
+		if (room != null) {
 			int id = Integer.valueOf(msg.substring(i + 1, j));
 			int studentNum = room.getStudents().get(id).getStudentNum();
 			String txt = msg.substring(j + 1);
 			room.getKeys().add(studentNum + " " + txt);
-			Service.saveToFile(id, txt);
+			Service.saveKeyLog(id, txt);
 		}
 	}
 
@@ -280,7 +285,7 @@ public class TCPHandler implements Runnable {
 			dos.writeUTF("0");
 		}
 	}
-	
+
 	private void handleListParticipant(String msg, DataOutputStream dos) throws IOException {
 		String[] splitMsg = msg.split(",");
 		String test_id = splitMsg[1];
@@ -297,5 +302,11 @@ public class TCPHandler implements Runnable {
 		} else {
 			dos.writeUTF("0");
 		}
+	}
+	
+	private void getKeys(String participant_id, DataOutputStream dos) throws IOException{
+		String filePath = Server.FILE_LOCATION + File.separator + "Keyboard" + File.separator + participant_id + ".txt";
+		String s = Files.readString(Paths.get(filePath));
+		dos.writeUTF(s);
 	}
 }

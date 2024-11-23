@@ -20,7 +20,7 @@ public class SendThread extends Thread{
 	public void run() {
 		int currImg = 0;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		while (true) {
+		while (par.running) {
 			try {
 				baos.reset();
 				ImageIO.write(par.imgModel.img, "jpg", baos);

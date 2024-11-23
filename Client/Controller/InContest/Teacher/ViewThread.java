@@ -6,20 +6,19 @@ import pbl4.Client.DTO.InContest.Teacher.ImageModel;
 import pbl4.Client.DTO.InContest.Teacher.Packet;
 
 public class ViewThread extends Thread {
-	private TeacherController par;
+	public static TeacherController par;
 
 	public ViewThread(TeacherController par) {
-		this.par = par;
+		ViewThread.par = par;
 	}
 
 	public void run() {
-		while (true) {
+		while (par.running) {
 			try {
 //				if (par.currImage == null) {
 //					try {
 //						Thread.sleep(10);
 //					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
 //						e.printStackTrace();
 //					}
 //					continue;
@@ -43,7 +42,6 @@ public class ViewThread extends Thread {
 				try {
 					Thread.sleep(0, 1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} catch (NullPointerException e) {

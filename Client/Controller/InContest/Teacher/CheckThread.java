@@ -13,12 +13,11 @@ public class CheckThread extends Thread{
 	}
 	
 	public void run() {
-		while (true) {
+		while (par.running) {
 			if (par.images.size() == 0)
 				try {
 					Thread.sleep(0, 1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			for (Map.Entry<Integer, ArrayList<ImageModel>> entry : par.images.entrySet()) {

@@ -15,7 +15,7 @@
 //		VideoCapture camera = new VideoCapture(0);
 //		Mat frame = new Mat();
 //		par.camImg = new Mat();
-//		while (true) {
+//		while (par.running) {
 ////			long start = System.nanoTime();
 ////			start = System.nanoTime();
 //			camera.read(frame);

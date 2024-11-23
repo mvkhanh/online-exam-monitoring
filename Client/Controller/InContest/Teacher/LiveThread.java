@@ -14,7 +14,7 @@ public class LiveThread extends Thread {
 	}
 
 	public void run() {
-		while (true) {
+		while (par.running) {
 			try (Socket tcpSocket = new Socket(TeacherController.serverAddress, TeacherController.tcpPort);
 					DataInputStream dis = new DataInputStream(tcpSocket.getInputStream());
 					DataOutputStream dos = new DataOutputStream(tcpSocket.getOutputStream())) {

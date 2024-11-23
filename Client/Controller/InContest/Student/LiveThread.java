@@ -21,7 +21,7 @@ public class LiveThread extends Thread {
 	public void run() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 		LocalTime start = LocalTime.now();
-		while (true) {
+		while (par.running) {
 			try (Socket tcpSocket = new Socket(StudentController.serverAddress, StudentController.tcpPort);
 					DataInputStream dis = new DataInputStream(tcpSocket.getInputStream());
 					DataOutputStream dos = new DataOutputStream(tcpSocket.getOutputStream())) {
@@ -42,34 +42,35 @@ public class LiveThread extends Thread {
 				String msg = "";
 				while (!(msg = dis.readUTF()).equals("E")) {
 					if (msg.startsWith("H1") && !isFocusScreen) {
-						if(isFocusCam) {
+						if (isFocusCam) {
 							isFocusCam = false;
 //							par.camDim = new Size(StudentController.NORMAL_WIDTH, StudentController.NORMAL_HEIGHT);
 						}
 						isFocusScreen = true;
 						par.handleFocus(StudentController.FOCUS_WIDTH, StudentController.FOCUS_HEIGHT);
-					}
-					else if(msg.startsWith("H2") && !isFocusCam) {
-						if(isFocusScreen) {
+					} else if (msg.startsWith("H2") && !isFocusCam) {
+						if (isFocusScreen) {
 							isFocusScreen = false;
 							par.handleFocus(StudentController.NORMAL_WIDTH, StudentController.NORMAL_HEIGHT);
 						}
 						isFocusCam = true;
 //						par.camDim = new Size(StudentController.FOCUS_WIDTH, StudentController.FOCUS_HEIGHT);
-					}
-					else if (msg.startsWith("~H")) {
-						if(isFocusScreen) {
+					} else if (msg.startsWith("~H")) {
+						if (isFocusScreen) {
 							isFocusScreen = false;
 							par.handleFocus(StudentController.NORMAL_WIDTH, StudentController.NORMAL_HEIGHT);
 						}
-						if(isFocusCam) {
+						if (isFocusCam) {
 							isFocusCam = false;
 //							par.camDim = new Size(StudentController.NORMAL_WIDTH, StudentController.NORMAL_HEIGHT);
 						}
-						
+
 					} else if (msg.startsWith("M")) {
 						par.addText(msg.substring(1));
 						msgNum++;
+					} else if (msg.startsWith("Q")) {
+						par.running = false;
+						break;
 					}
 				}
 
@@ -82,7 +83,7 @@ public class LiveThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+		par.endStream();
 	}
-
 
 }

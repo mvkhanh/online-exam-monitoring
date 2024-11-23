@@ -1,4 +1,5 @@
 package pbl4.Server;
+
 //ifconfig | grep "inet " | grep -v 127.0.0.1
 //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
 import java.io.IOException;
@@ -17,7 +18,7 @@ import pbl4.Server.DTO.Room;
 public class Server {
 	public static Map<Integer, Room> rooms = new ConcurrentHashMap<>();
 	public static final long TIMEOUT = 10000;
-	public static String FILE_LOCATION = ""; //Thư mục của project/id participant
+	public static String FILE_LOCATION = "Data"; // Thư mục của project/id participant
 
 	public static void main(String[] args) {
 		new Thread(new TCPServer()).start();
@@ -49,14 +50,17 @@ class UDPServer implements Runnable {
 
 		try (DatagramSocket udpSocket = new DatagramSocket(9999)) {
 			while (true) {
-				byte[] receiveData = new byte[1105];
-				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-				udpSocket.receive(receivePacket);
-				String studentAddress = receivePacket.getAddress().toString() + receivePacket.getPort();
-				Room room = Server.rooms.get((int) receiveData[0]);
-				receiveData[0] = room.getStudentNums().get(studentAddress).byteValue();
-				udpSocket.send(new DatagramPacket(receiveData, receivePacket.getLength(), room.getAddress(),
-						room.getUdpPort()));
+				try {
+					byte[] receiveData = new byte[1105];
+					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+					udpSocket.receive(receivePacket);
+					String studentAddress = receivePacket.getAddress().toString() + receivePacket.getPort();
+					Room room = Server.rooms.get((int) receiveData[0]);
+					receiveData[0] = room.getStudentNums().get(studentAddress).byteValue();
+					udpSocket.send(new DatagramPacket(receiveData, receivePacket.getLength(), room.getAddress(),
+							room.getUdpPort()));
+				} catch (NullPointerException e) {
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

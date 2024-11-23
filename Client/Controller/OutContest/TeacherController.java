@@ -12,10 +12,10 @@ import pbl4.Client.Controller.BaseController;
 import pbl4.Client.DTO.OutContest.Participant;
 import pbl4.Client.DTO.OutContest.Test;
 import pbl4.Client.DTO.OutContest.User;
-import pbl4.Client.DTO.OutContest.Keys.Keys;
 import pbl4.Client.Utils.Service;
 import pbl4.Client.View.OutContest.Home;
 import pbl4.Client.View.OutContest.Teacher;
+import pbl4.Client.View.OutContest.Keys.Keys;
 
 public class TeacherController extends BaseController {
 	public User user;
@@ -117,7 +117,18 @@ public class TeacherController extends BaseController {
 	}
 
 	public void showKeys(Integer participant_id) {
-		new Keys(participant_id);
+		if (participant_id == null)
+			return;
+		String msg = "K" + participant_id;
+		try (Socket soc = new Socket(serverAddress, tcpPort);
+				DataInputStream dis = new DataInputStream(soc.getInputStream());
+				DataOutputStream dos = new DataOutputStream(soc.getOutputStream())) {
+			dos.writeUTF(msg);
+			String receiveMsg = dis.readUTF();
+			new Keys(receiveMsg);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
-	
+
 }

@@ -8,6 +8,7 @@ import java.net.Socket;
 import pbl4.Client.Controller.InContest.InContestBaseController;
 import pbl4.Client.DTO.InContest.Student.ImageModel;
 import pbl4.Client.View.InContest.Student.Student;
+import pbl4.Client.View.OutContest.Home;
 
 public class StudentController extends InContestBaseController {
 //	static {
@@ -47,23 +48,17 @@ public class StudentController extends InContestBaseController {
 			}
 			else res = null;
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return res;
 	}
 	
 	public void startThreads() {
-		threads.add(new CaptureThread(this));
-		threads.getLast().start();
-//		threads.add(new CaptureThread2(this));
-//		threads.getLast().start();
-		threads.add(new SendThread(this));
-		threads.getLast().start();
-//		threads.add(new SendThread2(this));
-//		threads.getLast().start();
-		threads.add(new LiveThread(this));
-		threads.getLast().start();
+		new CaptureThread(this).start();
+//		new CaptureThread2(this).start();
+		new SendThread(this).start();
+//		new SendThread2(this).start();
+		new LiveThread(this).start();
 	}
 	
 	public void handleFocus(int width, int height) {
@@ -75,5 +70,10 @@ public class StudentController extends InContestBaseController {
 	
 	public void addText(String txt) {
 		view.addText(txt);
+	}
+	
+	public void endStream() {
+		view.dispose();
+		new Home().setVisible(true);;
 	}
 }

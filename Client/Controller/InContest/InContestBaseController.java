@@ -14,17 +14,15 @@ public class InContestBaseController extends BaseController{
 	public String id;
 	public String name;
 	public DatagramSocket udpSocket;
-	public ArrayList<Thread> threads;
+	public boolean running = true;
 	
 	public InContestBaseController() {
 		super();
 		try {
 			udpSocket = new DatagramSocket();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.exit(1);
 		}
-		threads = new ArrayList<>();
 	}
 	
 	public void sendMessage(String msg) {

@@ -20,7 +20,7 @@
 //
 //	public void run() {
 //		int currImg = 0;
-//		while (true) {
+//		while (par.running) {
 //			try {
 //				Mat matTemp = par.camImg;
 //				MatOfByte buffer = new MatOfByte();

@@ -1,8 +1,5 @@
-package pbl4.Client.DTO.OutContest.Keys;
+package pbl4.Client.View.OutContest.Keys;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class SimulationThread extends Thread {
@@ -19,16 +16,8 @@ public class SimulationThread extends Thread {
 	}
 
 	public void run() {
-		String s = "";
-		try {
-			s = new String(Files.readAllBytes(Paths.get("s.txt")));
-			System.out.println(s);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		ArrayList<Double> times = new ArrayList<>();
-		ArrayList<Character> keys = new ArrayList<>();
-		prepare(s.substring(0, s.length() - 1), times, keys);
+		ArrayList<Double> times = par.times;
+		ArrayList<Character> keys = par.keys;
 		lines[0] = "";
 		while (idx < keys.size()) {
 			if (par.isPlaying) {
@@ -42,7 +31,6 @@ public class SimulationThread extends Thread {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -57,16 +45,6 @@ public class SimulationThread extends Thread {
 		par.isPlaying = false;
 		par.simulation = null;
 		par.start.setText("▶");
-	}
-
-	public void prepare(String s, ArrayList<Double> times, ArrayList<Character> keys) {
-		String[] splits = s.split(" ");
-		for (int i = 0; i < splits.length; i++) {
-			if (i % 2 == 0)
-				times.add(Double.parseDouble(splits[i]));
-			else
-				keys.add(splits[i].charAt(0));
-		}
 	}
 
 	public void readS(char c, double duration) {
