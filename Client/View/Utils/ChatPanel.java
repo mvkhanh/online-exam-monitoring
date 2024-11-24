@@ -8,7 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import pbl4.Client.Controller.InContest.InContestBaseController;
+import pbl4.Client.Controller.InContestBaseController;
 
 public class ChatPanel extends LogPanel {
 

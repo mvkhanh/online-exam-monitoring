@@ -27,9 +27,4 @@ public class Service {
 	            JOptionPane.QUESTION_MESSAGE
 	        );
 	}
-
-
-	public static void loadPage(String name) {
-
-	}
 }

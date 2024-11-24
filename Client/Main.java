@@ -1,6 +1,6 @@
 package pbl4.Client;
 
-import pbl4.Client.View.OutContest.Home;
+import pbl4.Client.View.Home;
 
 public class Main {
 

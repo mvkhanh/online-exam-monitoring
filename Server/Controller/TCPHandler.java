@@ -3,7 +3,6 @@ package pbl4.Server.Controller;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
@@ -15,14 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import pbl4.Server.Constant;
 import pbl4.Server.Server;
 import pbl4.Server.DAO.ParticipantDAO;
-import pbl4.Server.DAO.TestsDAO;
+import pbl4.Server.DAO.TestDAO;
 import pbl4.Server.DAO.UsersDAO;
 import pbl4.Server.DTO.ClientModel;
 import pbl4.Server.DTO.Room;
 import pbl4.Server.Entity.Participant;
 import pbl4.Server.Entity.Test;
+import pbl4.Server.Entity.User;
 import pbl4.Server.Utils.Service;
 
 public class TCPHandler implements Runnable {
@@ -123,7 +124,7 @@ public class TCPHandler implements Runnable {
 		int j = msg.indexOf(" ", i + 1);
 		String user_id = msg.substring(i + 1, j);
 		String tencuocthi = msg.substring(j + 1);
-		int roomId = TestsDAO.addTest(user_id, tencuocthi);
+		int roomId = TestDAO.addTest(user_id, tencuocthi);
 		Room room = new Room(address, udpPort, tencuocthi);
 		Server.rooms.put(roomId, room);
 		return roomId;
@@ -248,9 +249,9 @@ public class TCPHandler implements Runnable {
 		String splitMsg[] = msg.split(",");
 		String username = splitMsg[1];
 		String password = splitMsg[2];
-		int user_id = UsersDAO.login(username, password);
-		if (user_id != -1) {
-			dos.writeUTF("Y," + user_id);
+		User user = UsersDAO.login(username, password);
+		if (user != null) {
+			dos.writeUTF("Y," + user.getId());
 		} else {
 			dos.writeUTF("N");
 		}
@@ -273,7 +274,7 @@ public class TCPHandler implements Runnable {
 	private void handleListTestRequest(String msg, DataOutputStream dos) throws IOException {
 		String[] splitMsg = msg.split(",");
 		String user_id = splitMsg[1];
-		List<Test> listData = TestsDAO.listTest(user_id);
+		List<Test> listData = TestDAO.listTests(user_id);
 		StringBuilder sendMsg = new StringBuilder();
 		if (!listData.isEmpty()) {
 			for (int i = 0; i < listData.size(); i++) {
@@ -293,7 +294,7 @@ public class TCPHandler implements Runnable {
 	private void handleListParticipant(String msg, DataOutputStream dos) throws IOException {
 		String[] splitMsg = msg.split(",");
 		String test_id = splitMsg[1];
-		List<Participant> listData = ParticipantDAO.listParticipant(test_id);
+		List<Participant> listData = ParticipantDAO.listParticipants(test_id);
 		StringBuilder sendMsg = new StringBuilder();
 		if (!listData.isEmpty()) {
 			for (int i = 0; i < listData.size(); i++) {
@@ -309,7 +310,7 @@ public class TCPHandler implements Runnable {
 	}
 	
 	private void getKeys(String participant_id, DataOutputStream dos) throws IOException{
-		String filePath = Server.FILE_LOCATION + File.separator + "Keyboard" + File.separator + participant_id + ".txt";
+		String filePath = Constant.FILE_LOCATION + File.separator + "Keyboard" + File.separator + participant_id + ".txt";
 		String s = Files.readString(Paths.get(filePath));
 		dos.writeUTF(s);
 	}

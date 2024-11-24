@@ -17,8 +17,6 @@ import pbl4.Server.DTO.Room;
 
 public class Server {
 	public static Map<Integer, Room> rooms = new ConcurrentHashMap<>();
-	public static final long TIMEOUT = 10000;
-	public static String FILE_LOCATION = "Data";
 
 	public static void main(String[] args) {
 		new Thread(new TCPServer()).start();
@@ -32,7 +30,7 @@ class TCPServer implements Runnable {
 
 	@Override
 	public void run() {
-		try (ServerSocket tcpServer = new ServerSocket(8888)) {
+		try (ServerSocket tcpServer = new ServerSocket(Constant.TCP_PORT)) {
 			while (true) {
 				Socket clientSocket = tcpServer.accept();
 				new Thread(new TCPHandler(clientSocket)).start();
@@ -48,10 +46,10 @@ class UDPServer implements Runnable {
 	@Override
 	public void run() {
 
-		try (DatagramSocket udpSocket = new DatagramSocket(9999)) {
+		try (DatagramSocket udpSocket = new DatagramSocket(Constant.UDP_PORT)) {
 			while (true) {
 				try {
-					byte[] receiveData = new byte[1105];
+					byte[] receiveData = new byte[Constant.PACKET_SIZE];
 					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 					udpSocket.receive(receivePacket);
 					String studentAddress = receivePacket.getAddress().toString() + receivePacket.getPort();
