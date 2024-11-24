@@ -6,6 +6,7 @@ import java.net.InetAddress;
 public class Constant {
 	
 	//Server
+	public static String IP = "localhost";
 	public static InetAddress serverAddress;
 	public static final int tcpPort = 8888;
 	public static final int udpPort = 9999;
@@ -13,7 +14,7 @@ public class Constant {
 
 	static {
 		try {
-			serverAddress = InetAddress.getByName("localhost");
+			serverAddress = InetAddress.getByName(IP);
 		} catch (IOException e) {
 			System.exit(1);
 		}

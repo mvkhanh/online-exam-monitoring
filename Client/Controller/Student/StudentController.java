@@ -20,7 +20,7 @@ public class StudentController extends InContestBaseController {
 
 	public StudentInContest view;
 	public ScreenImageDTO imgModel = new ScreenImageDTO(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
-//	public Size camDim = new Size(NORMAL_WIDTH, NORMAL_HEIGHT);
+//	public Size camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
 //	public Mat camImg = new Mat();
 	public String currKeys = "";
 
