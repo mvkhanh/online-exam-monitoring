@@ -7,7 +7,6 @@ public class ImageModel {
 	private int total;
 	private Map<Integer, Packet> data = new ConcurrentHashMap<>();
 	private long time = System.currentTimeMillis();
-	private int studentNum;
 
 	public ImageModel() {
 
@@ -40,14 +39,6 @@ public class ImageModel {
 
 	public void setTime(long time) {
 		this.time = time;
-	}
-
-	public int getStudentNum() {
-		return studentNum;
-	}
-
-	public void setStudentNum(int studentNum) {
-		this.studentNum = studentNum;
 	}
 
 }

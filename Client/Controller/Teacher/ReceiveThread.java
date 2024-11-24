@@ -21,8 +21,9 @@ public class ReceiveThread extends Thread {
 				par.udpSocket.receive(receivePacket);
 				par.packets.add(new Packet(receivePacket.getLength(), receivePacket.getData()));
 				if (!isProcessing) {
-					for (int i = 0; i < Constant.PROCESS_THREADS; i++)
-						new ProcessThread(par).start();
+					new ProcessThread(par, true).start();
+					for (int i = 0; i < Constant.PROCESS_THREADS - 1; i++)
+						new ProcessThread(par, false).start();
 					isProcessing = true;
 				}
 			} catch (IOException e) {
