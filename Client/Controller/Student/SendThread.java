@@ -18,24 +18,24 @@ public class SendThread extends Thread{
 		this.par = par;
 		this.isScreen = isScreen;
 		tmp[0] = Byte.valueOf(par.roomId);
-		tmp[4] = 1;
 	}
-	
+	//1 byte cho roomId, 3 bit cho STT cua anh, 1 bit cho camera hay screen, 7 bit cho size, 7 bit cho STT packet
 	public void run() {
 		int currImg = 0;
+		int header = Constant.PACKET_SIZE - Constant.IMAGE_SEGMENT;
 		while (par.running) {
 			try {				
 				byte[] image = isScreen ? compressScreen() : compressCam();
 				int size = (image.length + Constant.IMAGE_SEGMENT - 1) / Constant.IMAGE_SEGMENT;
-				int j = 5, packetNum = 0;
+				int j = header, packetNum = 0;
 				tmp[1] = (byte)size;
-				tmp[2] = (byte)currImg;
+				tmp[2] = (byte)(currImg * Constant.MAX_CAMS + (isScreen ? 1 : 0)); //Chon maxCam vi maxCam lon hon
 				for(int i = 1; i <= image.length; i++) {
 					tmp[j++] = image[i - 1];
 					if(i % Constant.IMAGE_SEGMENT == 0 || i == image.length) {
 						tmp[3] = (byte)packetNum++;
 						par.udpSocket.send(new DatagramPacket(tmp, j, Constant.serverAddress, Constant.udpPort));
-						j = 5;
+						j = header;
 					}
 				}
 				currImg = (currImg + 1) % (isScreen ? Constant.MAX_SCREENS : Constant.MAX_CAMS);

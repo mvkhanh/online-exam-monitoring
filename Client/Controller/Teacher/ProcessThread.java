@@ -27,16 +27,17 @@ public class ProcessThread extends Thread {
 				continue;
 			}
 			byte[] receiveData = packet.getData();
-			int studentNum = receiveData[4] == 1 ? receiveData[0] * 2 : receiveData[0] * 2 + 1;
+			int isScreen = receiveData[2] % Constant.MAX_CAMS;
+			int studentNum = isScreen == 1 ? receiveData[0] * 2 : receiveData[0] * 2 + 1;
 			int total = receiveData[1];
-			int imageNum = receiveData[2];
+			int imageNum = receiveData[2] / Constant.MAX_CAMS;
 			int packetNum = receiveData[3];
 			ArrayList<ImageModel> studentImages = par.images.get(studentNum);
 			if (studentImages == null) {
 				studentImages = new ArrayList<>();
-				int max_size = receiveData[4] == 1 ? Constant.MAX_SCREENS
+				int max_size = isScreen == 1 ? Constant.MAX_SCREENS
 						: Constant.MAX_CAMS;
-				while (studentImages.size() <= max_size)
+				while (studentImages.size() < max_size)
 					studentImages.add(null);
 				ImageModel image = new ImageModel(total, System.currentTimeMillis());
 				image.getData().put(packetNum, packet);

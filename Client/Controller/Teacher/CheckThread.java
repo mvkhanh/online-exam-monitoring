@@ -6,13 +6,13 @@ import java.util.Map;
 import pbl4.Client.Constant;
 import pbl4.Client.DTO.InContest.Teacher.ImageModel;
 
-public class CheckThread extends Thread{
+public class CheckThread extends Thread {
 	private TeacherController par;
-	
+
 	public CheckThread(TeacherController par) {
 		this.par = par;
 	}
-	
+
 	public void run() {
 		while (par.running) {
 			if (par.images.size() == 0)
@@ -29,7 +29,8 @@ public class CheckThread extends Thread{
 					if (img == null)
 						continue;
 					if (img.getTotal() == img.getData().size()) {
-						while(studentNum >= par.viewList.size()) par.viewList.add(null);
+						while (studentNum >= par.viewList.size())
+							par.viewList.add(null);
 						par.viewList.set(studentNum, img);
 						studentImages.set(i, null);
 						break;

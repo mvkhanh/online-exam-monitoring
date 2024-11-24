@@ -10,7 +10,7 @@ public class Constant {
 	public static InetAddress serverAddress;
 	public static final int tcpPort = 8888;
 	public static final int udpPort = 9999;
-	public static final int PACKET_SIZE = 1105;
+	public static final int PACKET_SIZE = 1104;
 
 	static {
 		try {

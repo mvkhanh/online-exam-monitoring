@@ -74,7 +74,7 @@ public class TeacherInContest extends JFrame {
 
 	public void addCameraScreen() {
 		JLabel cameraScreen = new JLabel();
-		cameraScreen.setBorder(new LineBorder(Color.BLACK, 5));
+		cameraScreen.setBorder(new LineBorder(Color.BLACK, 1));
 		cameraScreen.setHorizontalTextPosition(JLabel.CENTER);
 		cameraScreen.setVerticalTextPosition(JLabel.TOP);
 

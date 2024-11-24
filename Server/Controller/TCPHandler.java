@@ -108,7 +108,7 @@ public class TCPHandler implements Runnable {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} finally {
 			try {
 				socket.close();
