@@ -55,3 +55,7 @@ public class CaptureThread extends Thread {
 
 //		MH: 4251500
 //		Cam: 2135300
+
+// MH: gui lien tuc
+// FC: 18 cai gui 1 cai
+// 500 cai gui 1 cai -> MH: 21s, FC: 20s

@@ -26,6 +26,7 @@ public class SendThread extends Thread{
 		while (par.running) {
 			try {				
 				byte[] image = isScreen ? compressScreen() : compressCam();
+				
 				int size = (image.length + Constant.IMAGE_SEGMENT - 1) / Constant.IMAGE_SEGMENT;
 				int j = header, packetNum = 0;
 				tmp[1] = (byte)size;
