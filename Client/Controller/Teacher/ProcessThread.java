@@ -60,7 +60,6 @@ public class ProcessThread extends Thread {
 				new CheckThread(par).start();
 				for (int i = 0; i < Constant.VIEW_THREADS; i++) {
 					new ViewThread(par).start();
-					System.out.println("Tạo view threads " + (i + 1));
 				}
 			}
 		}

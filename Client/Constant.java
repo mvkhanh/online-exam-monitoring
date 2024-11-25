@@ -32,6 +32,6 @@ public class Constant {
 	
 	//Teacher
 	public static final int PROCESS_THREADS = 3;
-	public static final int VIEW_THREADS = 3;
+	public static final int VIEW_THREADS = 2;
 	public static final long TIMEOUT = 4;
 }
