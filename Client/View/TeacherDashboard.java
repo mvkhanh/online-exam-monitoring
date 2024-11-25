@@ -33,7 +33,6 @@ public class TeacherDashboard extends javax.swing.JFrame {
 	}
 	
 	private void initComponents() {
-
 		jPanel1 = new javax.swing.JPanel();
 		jLabel1 = new javax.swing.JLabel();
 		jLabel2 = new javax.swing.JLabel();
@@ -273,29 +272,6 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		jTextArea1.setColumns(20);
 		jTextArea1.setRows(5);
 		jScrollPane4.setViewportView(jTextArea1);
-
-//		javax.swing.GroupLayout ctctFormLayout = new javax.swing.GroupLayout(ctctForm);
-//		ctctForm.setLayout(ctctFormLayout);
-//		ctctFormLayout.setHorizontalGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ctctFormLayout.createSequentialGroup()
-//						.addContainerGap()
-//						.addGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-//								.addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-//								.addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE))
-//						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(jScrollPane4,
-//								javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-//						.addContainerGap()));
-//		ctctFormLayout.setVerticalGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//				.addGroup(ctctFormLayout.createSequentialGroup().addContainerGap().addGroup(ctctFormLayout
-//						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//						.addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
-//						.addGroup(ctctFormLayout.createSequentialGroup()
-//								.addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-//								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(
-//										jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-//						.addContainerGap()));
-//
-//		mainPanel.add(ctctForm, "CTCT");
 		
 		javax.swing.GroupLayout ctctFormLayout = new javax.swing.GroupLayout(ctctForm);
 		ctctForm.setLayout(ctctFormLayout);
@@ -403,6 +379,8 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		this.setVisible(true);
 		
 		pack();
+		setLocationRelativeTo(null);
+
 	}
 
 	private void trangchuActionPerformed(java.awt.event.ActionEvent evt) {

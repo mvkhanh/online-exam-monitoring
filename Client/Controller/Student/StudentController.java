@@ -77,4 +77,9 @@ public class StudentController extends InContestBaseController {
 		view.dispose();
 		new Home().setVisible(true);;
 	}
+	
+	public void back() {
+		view.dispose();
+		new Home().setVisible(true);
+	}
 }

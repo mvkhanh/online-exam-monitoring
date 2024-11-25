@@ -27,7 +27,6 @@ public class Login extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         password = new javax.swing.JPasswordField();
@@ -122,6 +121,8 @@ public class Login extends javax.swing.JFrame {
         );
 
         pack();
+    	setLocationRelativeTo(null);
+
     }                     
 
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {                                      
@@ -133,10 +134,6 @@ public class Login extends javax.swing.JFrame {
     	new Register().setVisible(true);;
     	this.dispose();
     }                                        
-
-    public static void main(String args[]) {
-      
-    }
 
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

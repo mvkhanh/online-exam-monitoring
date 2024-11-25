@@ -25,7 +25,8 @@ public class Home extends javax.swing.JFrame {
 		jLabel2 = new javax.swing.JLabel();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		setBounds(100, 50, 800, 600);
+		setSize(800, 600);
+		setLocationRelativeTo(null);
 
 		jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 		jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));

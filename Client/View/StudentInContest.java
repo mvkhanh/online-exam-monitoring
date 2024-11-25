@@ -1,7 +1,6 @@
 package pbl4.Client.View;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +30,11 @@ public class StudentInContest extends JFrame implements NativeKeyListener {
 		JLabel cameraScreen = new JLabel();
 		cameraScreen.setBounds(0, 0, 640, 480);
 
-		JPanel topPn = new JPanel(new FlowLayout());
+		JPanel topPn = new JPanel(new BorderLayout());
+		JButton backBtn = new JButton("\u2190");
+		topPn.add(backBtn, BorderLayout.WEST);
+		backBtn.addActionListener(e -> controller.back());
+		JPanel topCenterPn = new JPanel(new FlowLayout());
 		JLabel lbName = new JLabel("Name:");
 		JTextField nameTf = new JTextField(10);
 		JLabel lbRoomId = new JLabel("Room ID:");
@@ -40,13 +43,13 @@ public class StudentInContest extends JFrame implements NativeKeyListener {
 		JLabel lbWarning = new JLabel("Khong ton tai phong");
 		JLabel teacher = new JLabel();
 		lbWarning.setVisible(false);
-		topPn.add(teacher);
-		topPn.add(lbName);
-		topPn.add(nameTf);
-		topPn.add(lbRoomId);
-		topPn.add(roomIdTf);
-		topPn.add(button);
-		topPn.add(lbWarning);
+		topCenterPn.add(teacher);
+		topCenterPn.add(lbName);
+		topCenterPn.add(nameTf);
+		topCenterPn.add(lbRoomId);
+		topCenterPn.add(roomIdTf);
+		topCenterPn.add(button);
+		topCenterPn.add(lbWarning);
 
 		button.addActionListener(new ActionListener() {
 
@@ -61,6 +64,7 @@ public class StudentInContest extends JFrame implements NativeKeyListener {
 					lbName.setVisible(false);
 					lbRoomId.setVisible(false);
 					lbWarning.setVisible(false);
+					backBtn.setVisible(false);
 					startCapture();
 				} else {
 					roomIdTf.setEditable(true);
@@ -71,13 +75,15 @@ public class StudentInContest extends JFrame implements NativeKeyListener {
 			}
 		});
 
+		topPn.add(topCenterPn, BorderLayout.CENTER);
 		chatPn = new ChatPanel(controller);
 
 		add(cameraScreen, BorderLayout.CENTER);
 		add(topPn, BorderLayout.NORTH);
 		add(chatPn, BorderLayout.EAST);
 
-		setSize(new Dimension(1000, 700));
+		setSize(1000, 700);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}

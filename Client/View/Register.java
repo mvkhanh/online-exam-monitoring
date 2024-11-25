@@ -9,7 +9,6 @@ public class Register extends javax.swing.JFrame {
 	}
 
 	private void initComponents() {
-
 		jLabel1 = new javax.swing.JLabel();
 		jLabel2 = new javax.swing.JLabel();
 		password = new javax.swing.JPasswordField();
@@ -102,6 +101,8 @@ public class Register extends javax.swing.JFrame {
 				.addContainerGap(109, Short.MAX_VALUE)));
 
 		pack();
+		setLocationRelativeTo(null);
+
 	}
 
 	private void registerActionPerformed(java.awt.event.ActionEvent evt) {
