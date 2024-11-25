@@ -47,6 +47,7 @@ public class CaptureThread extends Thread {
 //			camera.read(frame);
 //			Imgproc.resize(frame, par.camImg, par.camDim);
 //		}
+//		camera.release();
 	}
 }
 
