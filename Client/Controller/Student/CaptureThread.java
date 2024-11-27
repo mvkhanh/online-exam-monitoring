@@ -6,11 +6,18 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.videoio.VideoCapture;
+
 import pbl4.Client.DTO.InContest.ScreenImageDTO;
 
 public class CaptureThread extends Thread {
 	private StudentController par;
 	private boolean isScreen;
+
+	public static int camWidth;
+	public static int camHeight;
 
 	public CaptureThread(StudentController par, boolean isScreen) {
 		this.par = par;
@@ -35,18 +42,23 @@ public class CaptureThread extends Thread {
 		while (par.running) {
 			ScreenImageDTO tmp = par.imgModel;
 			BufferedImage fullImage = r.createScreenCapture(capture);
+			par.screenQueue.add(fullImage);
 			tmp.g2d.drawImage(fullImage, 0, 0, tmp.img.getWidth(), tmp.img.getHeight(), null);
 		}
 	}
-	
+
 	private void captureCam() {
-//		VideoCapture camera = new VideoCapture(0);
-//		Mat frame = new Mat();
-//		par.camImg = new Mat();
-//		while (par.running) {
-//			camera.read(frame);
-//			Imgproc.resize(frame, par.camImg, par.camDim);
-//		}
+		VideoCapture camera = new VideoCapture(0);
+		camWidth = (int) camera.get(org.opencv.videoio.Videoio.CAP_PROP_FRAME_WIDTH);
+		camHeight = (int) camera.get(org.opencv.videoio.Videoio.CAP_PROP_FRAME_HEIGHT);
+		par.camImg = new Mat();
+		while (par.running) {
+			Mat frame = new Mat();
+			camera.read(frame);
+			par.camQueue.add(frame);
+			par.frame = frame;
+		}
+		camera.release();
 	}
 }
 

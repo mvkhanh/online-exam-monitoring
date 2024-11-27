@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+
 import pbl4.Server.Constant;
 
 public class Service {
@@ -22,5 +26,13 @@ public class Service {
 		}
 	}
 	
+	public static Mat byteArrayToMat(byte[] byteArray) {
+        // Tạo một Mat từ mảng byte (tải hình ảnh từ mảng byte)
+        Mat mat = new Mat(1, byteArray.length, CvType.CV_8U);
+        mat.put(0, 0, byteArray);
+        return Imgcodecs.imdecode(mat, Imgcodecs.IMREAD_COLOR); // Đọc ảnh màu từ dữ liệu
+    }
 	//1 ham nhan vao participant id va danh sach cac mang byte -> luu thanh 1 file mp4
+	
+//	public static 
 }

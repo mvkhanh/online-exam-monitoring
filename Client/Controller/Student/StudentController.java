@@ -1,10 +1,17 @@
 package pbl4.Client.Controller.Student;
 
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.Socket;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 import pbl4.Client.Constant;
 import pbl4.Client.Controller.InContestBaseController;
@@ -13,17 +20,22 @@ import pbl4.Client.View.Home;
 import pbl4.Client.View.StudentInContest;
 
 public class StudentController extends InContestBaseController {
-//	static {
-//	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//}
-//	
+	static {
+	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+}
+	
 
 	public StudentInContest view;
 	public ScreenImageDTO imgModel = new ScreenImageDTO(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
-//	public Size camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
-//	public Mat camImg = new Mat();
+	public Size camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
+	public Mat camImg = new Mat();
 	public String currKeys = "";
-
+	public Mat frame = new Mat();
+	public Queue<Mat> camQueue = new ConcurrentLinkedQueue<Mat>();
+	public Queue<BufferedImage> screenQueue = new ConcurrentLinkedQueue<BufferedImage>();
+	public boolean isEnd = false;
+	
+	
 	public StudentController() {
 		try {
 			udpSocket = new DatagramSocket();
@@ -56,10 +68,12 @@ public class StudentController extends InContestBaseController {
 	
 	public void startThreads() {
 		new CaptureThread(this, true).start();
-//		new CaptureThread(this, false).start();
+		new CaptureThread(this, false).start();
 		new SendThread(this, true).start();
-//		new SendThread(this, false).start();
+		new SendThread(this, false).start();
 		new LiveThread(this).start();
+		new CameraSaveVideoThread(this).start();	
+		new ScreenSaveVideoThread(this).start();
 	}
 	
 	public void handleFocus(int width, int height) {
@@ -74,6 +88,7 @@ public class StudentController extends InContestBaseController {
 	}
 	
 	public void endStream() {
+		isEnd = true;
 		view.dispose();
 		new Home().setVisible(true);;
 	}

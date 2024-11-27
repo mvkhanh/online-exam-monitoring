@@ -13,6 +13,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoWriter;
 
 import pbl4.Server.Constant;
 import pbl4.Server.Server;
@@ -83,25 +91,28 @@ public class TCPHandler implements Runnable {
 			case 'P':
 				handleListParticipant(message, output);
 				break;
-			
+
 			case 'L': // login : "L,username,password"
 				handleLogin(message, output);
 				break;
-				
+
 			case 'R': // register : "R,username,password"
 				handleRegister(message, output);
 				break;
-			
+
 			case 'U': // user update
 				handleUpdateUserRequest(message);
 				break;
-				
-			case 'K': //Lay file ban phim cua participant ve cho teacher xem
+
+			case 'K': // Lay file ban phim cua participant ve cho teacher xem
 				getKeys(message.substring(1), output);
 				break;
-				
-			case 'Q': //Teacher bam nut ket thuc
+
+			case 'Q': // Teacher bam nut ket thuc
 				endStream(message);
+				break;
+			case 'V': // luu video
+				saveVideo(message, input);
 				break;
 			default:
 				break;
@@ -116,6 +127,40 @@ public class TCPHandler implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	private void saveVideo(String message, DataInputStream input) {
+		Size size = null;
+		int length = 0;
+		try {
+			size = new Size(input.readInt(), input.readInt());
+			length = input.readInt();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		String splitMsg[] = message.split(",");
+		int typeVideo = Integer.parseInt(splitMsg[1]);
+		String participant_id = splitMsg[2];
+		Queue<byte[]> imageBytes = new ConcurrentLinkedQueue<byte[]>();
+		
+		new SaveVideoThread(imageBytes, length, typeVideo, participant_id, size).start();;
+		for(int i=0; i<length; i++) {
+			try { 
+				int bytesLength = input.readInt();
+				if (bytesLength > 0) {
+					byte[] receiveImageBytes = new byte[bytesLength];
+
+					input.readFully(receiveImageBytes);
+
+					imageBytes.add(receiveImageBytes);
+				}
+			} catch (IOException ex) {
+				break;
+			}
+		}
+		
 	}
 
 	private int createRoom(String msg) {
@@ -308,13 +353,14 @@ public class TCPHandler implements Runnable {
 			dos.writeUTF("0");
 		}
 	}
-	
-	private void getKeys(String participant_id, DataOutputStream dos) throws IOException{
-		String filePath = Constant.FILE_LOCATION + File.separator + "Keyboard" + File.separator + participant_id + ".txt";
+
+	private void getKeys(String participant_id, DataOutputStream dos) throws IOException {
+		String filePath = Constant.FILE_LOCATION + File.separator + "Keyboard" + File.separator + participant_id
+				+ ".txt";
 		String s = Files.readString(Paths.get(filePath));
 		dos.writeUTF(s);
 	}
-	
+
 	private void endStream(String message) {
 		Server.rooms.remove(Integer.valueOf(message.substring(1)));
 	}

@@ -11,11 +11,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.opencv.core.Core;
+
 import pbl4.Server.Controller.CleanThread;
 import pbl4.Server.Controller.TCPHandler;
 import pbl4.Server.DTO.Room;
 
 public class Server {
+	static {
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+	}
+	
 	public static Map<Integer, Room> rooms = new ConcurrentHashMap<>();
 
 	public static void main(String[] args) {

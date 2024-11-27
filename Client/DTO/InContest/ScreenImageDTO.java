@@ -9,7 +9,7 @@ public class ScreenImageDTO {
 	public Graphics2D g2d;
 	
 	public ScreenImageDTO(int width, int height) {
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
 		g2d = img.createGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 	}

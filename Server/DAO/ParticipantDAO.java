@@ -1,5 +1,6 @@
 package pbl4.Server.DAO;
 
+import java.io.File;
 import java.util.List;
 
 import pbl4.Server.Entity.Participant;
@@ -16,6 +17,18 @@ public class ParticipantDAO {
 
     public static Integer addParticipant(int testId, String name) {
         String sql = "INSERT INTO participants (test_id, name) VALUES (?, ?)";
-        return genericDAO.add(sql, testId, name);
+        int participant_id = genericDAO.add(sql, testId, name);
+        createNewParticipantFolder(participant_id);
+        return participant_id;
+    }
+    
+    public static void createNewParticipantFolder(int participant_id) {
+        String folderPath = "D:/real_pbl4/participant" + participant_id;
+
+        File folder = new File(folderPath);
+        
+        if(!folder.exists()) {
+        	folder.mkdirs();
+        }
     }
 }

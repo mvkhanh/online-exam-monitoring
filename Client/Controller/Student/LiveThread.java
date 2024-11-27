@@ -8,6 +8,8 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import org.opencv.core.Size;
+
 import pbl4.Client.Constant;
 
 public class LiveThread extends Thread {
@@ -39,7 +41,7 @@ public class LiveThread extends Thread {
 					if (msg.startsWith("H1") && !isFocusScreen) {
 						if (isFocusCam) {
 							isFocusCam = false;
-//							par.camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
+							par.camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
 						}
 						isFocusScreen = true;
 						par.handleFocus(Constant.FOCUS_WIDTH, Constant.FOCUS_HEIGHT);
@@ -49,7 +51,7 @@ public class LiveThread extends Thread {
 							par.handleFocus(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
 						}
 						isFocusCam = true;
-//						par.camDim = new Size(Constant.FOCUS_WIDTH, Constant.FOCUS_HEIGHT);
+						par.camDim = new Size(Constant.FOCUS_WIDTH, Constant.FOCUS_HEIGHT);
 					} else if (msg.startsWith("~H")) {
 						if (isFocusScreen) {
 							isFocusScreen = false;
@@ -57,7 +59,7 @@ public class LiveThread extends Thread {
 						}
 						if (isFocusCam) {
 							isFocusCam = false;
-//							par.camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
+							par.camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
 						}
 
 					} else if (msg.startsWith("M")) {
