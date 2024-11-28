@@ -18,17 +18,13 @@ public class CameraSaveVideoThread extends Thread {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (par.running) {
 			int size = par.camQueue.size();
-			if (!par.running || size >= 300) {
+			if (size >= 300) {
 				long start = System.nanoTime();
-				boolean b = !par.running;
 				try (Socket soc = new Socket(Constant.serverAddress, Constant.tcpPort);
 						DataOutputStream dos = new DataOutputStream(soc.getOutputStream())) {
-					if(b)
-						dos.writeUTF("V," + 1 + "," + par.id); // 1 : camera, 2 : screen
-					else
-						dos.writeUTF("V," + 3 + "," + par.id); // xu ly goi tin cuoi cung
+					dos.writeUTF("V," + 1 + "," + par.id); // 1 : camera, 2 : screen
 					dos.writeInt(CaptureThread.camWidth);
 					dos.writeInt(CaptureThread.camHeight);
 					dos.writeInt(size);
@@ -47,8 +43,6 @@ public class CameraSaveVideoThread extends Thread {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				if (b)
-					break;
 				System.out.println("Camera: " + (System.nanoTime() - start) * 0.00000001);
 			} else {
 				try {

@@ -30,7 +30,7 @@ public class SaveVideoThread extends Thread {
 		if (typeVideo == 1)
 			this.fps = 30;
 		else
-			this.fps = 24;
+			this.fps = 18;
 	}
 
 	@Override
@@ -43,12 +43,6 @@ public class SaveVideoThread extends Thread {
 	}
 
 	void processFunc() throws Exception {
-		
-		if(typeVideo == 3 || typeVideo == 4) {
-			typeVideo -= 2;
-			Thread.sleep(1000);
-		}
-		
 		long start = System.nanoTime();
 		
 		String folderPath = Constant.FILE_LOCATION + File.separator + "Record" + File.separator + participant_id
