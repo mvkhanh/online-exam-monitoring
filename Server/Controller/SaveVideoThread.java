@@ -18,6 +18,7 @@ public class SaveVideoThread extends Thread {
 	int typeVideo;
 	String participant_id;
 	Size size;
+	int fps;
 
 	public SaveVideoThread(Queue<byte[]> imageBytes, int length, int typeVideo, String participant_id, Size size) {
 		super();
@@ -26,6 +27,10 @@ public class SaveVideoThread extends Thread {
 		this.typeVideo = typeVideo;
 		this.participant_id = participant_id;
 		this.size = size;
+		if (typeVideo == 1)
+			this.fps = 30;
+		else
+			this.fps = 24;
 	}
 
 	@Override
@@ -38,91 +43,119 @@ public class SaveVideoThread extends Thread {
 	}
 
 	void processFunc() throws Exception {
-	    String folderPath = Constant.FILE_LOCATION + File.separator + "Record" + File.separator + participant_id;
-	    File folder = new File(folderPath);
-	    if (!folder.exists() && !folder.mkdirs()) {
-	        System.err.println("Không thể tạo thư mục dự án: " + folderPath);
-	        return;
-	    }
+		
+		if(typeVideo == 3 || typeVideo == 4) {
+			typeVideo -= 2;
+			Thread.sleep(1000);
+		}
+		
+		long start = System.nanoTime();
+		
+		String folderPath = Constant.FILE_LOCATION + File.separator + "Record" + File.separator + participant_id
+				+ File.separator;
+		File folder = new File(folderPath);
+		if (!folder.exists() && !folder.mkdirs()) {
+			System.err.println("Không thể tạo thư mục dự án: " + folderPath);
+			return;
+		}
 
-	    String tempDir = folderPath + File.separator + "temp_images" + typeVideo + "/";
-	    File dir = new File(tempDir);
-	    if (!dir.exists()) dir.mkdirs();
+		// Đường dẫn lưu các ảnh tạm
+		String tempDir = folderPath + "temp_images" + typeVideo + File.separator;
+		File dir = new File(tempDir);
+		if (!dir.exists())
+			dir.mkdirs();
 
-	    for (int i = 0; i < length; i++) {
-	        if (imageBytes.size() > 0) {
-	            String outputPath = tempDir + String.format("frame_%05d.jpg", i);
-	            byte[] imageBytesData = imageBytes.poll();
-	            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
-	                fos.write(imageBytesData);
-	            }
-	        } else {
-	            Thread.sleep(10); // Nghỉ 10ms
-	            --i;
-	        }
-	    }
+		// Ghi từng mảng byte ra file ảnh (định dạng JPG)
+		for (int i = 0; i < length; i++) {
+			if (imageBytes.size() > 0) {
+				String outputPath = tempDir + String.format("frame_%05d.jpg", i); // Đổi thành JPG
+				try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+					fos.write(imageBytes.poll());
+				}
+			} else {
+				--i;
+				Thread.sleep(1);
+			}
+		}
 
-	    // Đường dẫn video cuối cùng
-	    String finalVideoPath = folderPath + File.separator + "output" + typeVideo + ".mp4";
+		// Đường dẫn đến video tạm và video đầu ra
+		String tempVideoPath = folderPath + "temp_video" + typeVideo + ".mp4"; // Video mới tạo
+		String finalVideoPath = folderPath + "output" + typeVideo + ".mp4"; // Video cuối cùng
 
-	    // Kiểm tra xem video cũ có tồn tại không
-	    File finalVideoFile = new File(finalVideoPath);
-	    if (finalVideoFile.exists()) {
-	        // Tạo file danh sách video cần ghép
-	        String concatListPath = folderPath + File.separator + "concat_list" + typeVideo + ".txt";
-	        try (PrintWriter writer = new PrintWriter(concatListPath)) {
-	            writer.println("file '" + finalVideoPath.replace("\\", "/") + "'");
-	            writer.println("file '" + tempDir.replace("\\", "/") + "frame_%05d.jpg'");
-	        }
+		// Tạo video từ các ảnh tạm
+		System.out.println("Creating video...");
+		String ffmpegCommand = String.format(
+				"ffmpeg -y -framerate " + fps
+						+ " -i %sframe_%%05d.jpg -c:v libx264 -pix_fmt yuv420p -movflags +faststart %s",
+				tempDir, tempVideoPath);
+		Process process = Runtime.getRuntime().exec(ffmpegCommand);
 
-	        // Ghép video
-	        System.out.println("Appending video...");
-	        String concatCommand = String.format(
-	            "ffmpeg -y -f concat -safe 0 -i %s -c copy %s",
-	            concatListPath,
-	            finalVideoPath
-	        );
-	        Process concatProcess = Runtime.getRuntime().exec(concatCommand);
+//		 In đầu ra lỗi từ FFmpeg để debug nếu cần
+		try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+			String line;
+			while ((line = errorReader.readLine()) != null) {
+				System.err.println(line);
+			}
+		}
 
-	        // In log lỗi FFmpeg
-	        try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(concatProcess.getErrorStream()))) {
-	            String line;
-	            while ((line = errorReader.readLine()) != null) {
-	                System.err.println(line);
-	            }
-	        }
+		process.waitFor();
 
-	        concatProcess.waitFor();
-	        new File(concatListPath).delete();
-	    } else {
-	        // Tạo video mới từ các ảnh
-	        System.out.println("Creating video...");
-	        String ffmpegCommand = String.format(
-	            "ffmpeg -y -framerate 30 -i %sframe_%%05d.jpg -c:v libx264 -pix_fmt yuv420p -movflags +faststart %s",
-	            tempDir,
-	            finalVideoPath
-	        );
-	        Process process = Runtime.getRuntime().exec(ffmpegCommand);
+		// Kiểm tra xem video tạm có được tạo thành công hay không
+		File tempVideoFile = new File(tempVideoPath);
+		if (!tempVideoFile.exists()) {
+			System.err.println("Failed to create temporary video.");
+			return;
+		}
 
-	        // In đầu ra lỗi từ FFmpeg
-	        try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
-	            String line;
-	            while ((line = errorReader.readLine()) != null) {
-	                System.err.println(line);
-	            }
-	        }
+		// Kiểm tra video cuối cùng đã tồn tại hay chưa
+		File finalVideoFile = new File(finalVideoPath);
+		if (finalVideoFile.exists()) {
+			// Tạo file danh sách video cần ghép
+			String concatListPath = "concat_list" + participant_id + "_" + typeVideo + ".txt";
+			try (PrintWriter writer = new PrintWriter(concatListPath)) {
+				writer.println("file '" + finalVideoPath.replace("\\", "/") + "'");
+				writer.println("file '" + tempVideoPath.replace("\\", "/") + "'");
+			}
 
-	        process.waitFor();
-	    }
+			// Ghép video
+			System.out.println("Appending video...");
+			String concatCommand = String.format("ffmpeg -y -f concat -safe 0 -i %s -c copy %s", concatListPath,
+					folderPath + "temp_output" + typeVideo + ".mp4");
+			Process concatProcess = Runtime.getRuntime().exec(concatCommand);
 
-	    // Xóa các file ảnh tạm
-	    for (File file : dir.listFiles()) {
-	        file.delete();
-	    }
-	    dir.delete();
+			// In log lỗi FFmpeg
+			try (BufferedReader errorReader = new BufferedReader(
+					new InputStreamReader(concatProcess.getErrorStream()))) {
+				String line;
+				while ((line = errorReader.readLine()) != null) {
+					System.err.println(line);
+				}
+			}
 
-	    System.out.println("Video updated successfully: " + finalVideoPath);
+			concatProcess.waitFor();
+
+			// Xóa video cũ và thay thế bằng video mới
+			new File(finalVideoPath).delete();
+			new File(folderPath + "temp_output" + typeVideo + ".mp4").renameTo(finalVideoFile);
+			new File(concatListPath).delete();
+		} else {
+			// Nếu video cuối cùng chưa tồn tại, chỉ cần đổi tên video tạm
+			tempVideoFile.renameTo(finalVideoFile);
+		}
+
+		// Xóa các file ảnh tạm
+		for (File file : dir.listFiles()) {
+			file.delete();
+		}
+		dir.delete();
+
+		// Xóa video tạm
+		tempVideoFile.delete();
+
+		System.out.println("Video updated successfully: " + finalVideoPath);
+
+		System.out.println((System.nanoTime() - start) * 0.00000001);
+		
 	}
-
 
 }

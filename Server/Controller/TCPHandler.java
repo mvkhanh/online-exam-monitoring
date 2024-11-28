@@ -131,6 +131,8 @@ public class TCPHandler implements Runnable {
 
 
 	private void saveVideo(String message, DataInputStream input) {
+		long start = System.nanoTime();
+		
 		Size size = null;
 		int length = 0;
 		try {
@@ -161,6 +163,7 @@ public class TCPHandler implements Runnable {
 			}
 		}
 		
+		System.out.println("Nhan: " + ((System.nanoTime() - start) * 0.00000001));
 	}
 
 	private int createRoom(String msg) {

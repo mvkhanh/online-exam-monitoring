@@ -20,11 +20,15 @@ public class CameraSaveVideoThread extends Thread {
 	public void run() {
 		while (true) {
 			int size = par.camQueue.size();
-			if (par.isEnd || size >= 900) {
-				System.out.println("Vo");
+			if (!par.running || size >= 300) {
+				long start = System.nanoTime();
+				boolean b = !par.running;
 				try (Socket soc = new Socket(Constant.serverAddress, Constant.tcpPort);
 						DataOutputStream dos = new DataOutputStream(soc.getOutputStream())) {
-					dos.writeUTF("V," + 1 + "," + par.id); // 1 : camera, 2 : screen
+					if(b)
+						dos.writeUTF("V," + 1 + "," + par.id); // 1 : camera, 2 : screen
+					else
+						dos.writeUTF("V," + 3 + "," + par.id); // xu ly goi tin cuoi cung
 					dos.writeInt(CaptureThread.camWidth);
 					dos.writeInt(CaptureThread.camHeight);
 					dos.writeInt(size);
@@ -33,16 +37,19 @@ public class CameraSaveVideoThread extends Thread {
 						MatOfByte buffer = new MatOfByte();
 						Imgcodecs.imencode(".jpg", matTemp, buffer);
 						byte[] imageBytes = buffer.toArray();
-						
+
 						dos.writeInt(imageBytes.length); // Gửi kích thước
-						
+
 						dos.write(imageBytes); // Gửi dữ liệu
-						
+
 						dos.flush();
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+				if (b)
+					break;
+				System.out.println("Camera: " + (System.nanoTime() - start) * 0.00000001);
 			} else {
 				try {
 					Thread.sleep(0, 10000);

@@ -21,9 +21,8 @@ import pbl4.Client.View.StudentInContest;
 
 public class StudentController extends InContestBaseController {
 	static {
-	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-}
-	
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+	}
 
 	public StudentInContest view;
 	public ScreenImageDTO imgModel = new ScreenImageDTO(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
@@ -33,9 +32,7 @@ public class StudentController extends InContestBaseController {
 	public Mat frame = new Mat();
 	public Queue<Mat> camQueue = new ConcurrentLinkedQueue<Mat>();
 	public Queue<BufferedImage> screenQueue = new ConcurrentLinkedQueue<BufferedImage>();
-	public boolean isEnd = false;
-	
-	
+
 	public StudentController() {
 		try {
 			udpSocket = new DatagramSocket();
@@ -58,38 +55,37 @@ public class StudentController extends InContestBaseController {
 				res = res.substring(i + 1);
 				this.roomId = roomId;
 				this.name = name;
-			}
-			else res = null;
+			} else
+				res = null;
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		return res;
 	}
-	
+
 	public void startThreads() {
 		new CaptureThread(this, true).start();
 		new CaptureThread(this, false).start();
 		new SendThread(this, true).start();
 		new SendThread(this, false).start();
-		new LiveThread(this).start();
-		new CameraSaveVideoThread(this).start();	
 		new ScreenSaveVideoThread(this).start();
+		new CameraSaveVideoThread(this).start();
+		new LiveThread(this).start();
 	}
-	
+
 	public void handleFocus(int width, int height) {
 		ScreenImageDTO img = new ScreenImageDTO(width, height);
 		ScreenImageDTO curr = imgModel;
 		imgModel = img;
 		curr.g2d.dispose();
 	}
-	
+
 	public void addText(String txt) {
 		view.addText(txt);
 	}
-	
+
 	public void endStream() {
-		isEnd = true;
 		view.dispose();
-		new Home().setVisible(true);;
+		new Home().setVisible(true);
 	}
 }

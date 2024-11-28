@@ -23,10 +23,15 @@ public class ScreenSaveVideoThread extends Thread {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		while (true) {
 			int size = par.screenQueue.size();
-			if (par.isEnd || size >= 500) {
+			if (!par.running || size >= 300) {
+				long start = System.nanoTime();
+				boolean b = !par.running;
 				try (Socket soc = new Socket(Constant.serverAddress, Constant.tcpPort);
 						DataOutputStream dos = new DataOutputStream(soc.getOutputStream())) {
-					dos.writeUTF("V," + 2 + "," + par.id); // 1 : camera, 2 : screen
+					if(b)
+						dos.writeUTF("V," + 2 + "," + par.id); // 1 : camera, 2 : screen
+					else
+						dos.writeUTF("V," + 4 + "," + par.id); // xu ly goi tin cuoi cung
 					dos.writeInt(dim.width);
 					dos.writeInt(dim.height);
 					dos.writeInt(size);
@@ -35,16 +40,19 @@ public class ScreenSaveVideoThread extends Thread {
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
 						ImageIO.write(tmp, "jpg", baos);
 						byte[] imageBytes = baos.toByteArray();
-						
+
 						dos.writeInt(imageBytes.length); // Gửi kích thước
-						
+
 						dos.write(imageBytes); // Gửi dữ liệu
-						
+
 						dos.flush();
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
+				if (b)
+					break;
+				System.out.println("Man hinh:" + (System.nanoTime() - start) * 0.00000001);
 			} else {
 				try {
 					Thread.sleep(10);
