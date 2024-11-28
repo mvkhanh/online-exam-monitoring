@@ -382,6 +382,8 @@ public class TeacherDashboard extends javax.swing.JFrame {
 
 		this.setVisible(true);
 
+		setTitle("Giáo viên");
+		
 		pack();
 	}
 

@@ -149,9 +149,9 @@ public class VideoPlayer extends JFrame {
 
 		this.setLayout(new BorderLayout());
 
-		JPanel panel1 = new JPanel(new GridLayout(2, 1));
-		JPanel panel2 = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		JPanel panel3 = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		JPanel panel1 = new JPanel(new GridLayout(2, 1, 0, 0));
+		JPanel panel2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		JPanel panel3 = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
 
 		panel2.add(slider);
 		panel3.add(fast);
@@ -167,6 +167,8 @@ public class VideoPlayer extends JFrame {
 
 		slider.setPreferredSize(new Dimension(400, 50));
 
+		setTitle("Xem video");
+		
 		JPanel panel4 = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		panel4.add(screen);
 		add(panel4, BorderLayout.CENTER);

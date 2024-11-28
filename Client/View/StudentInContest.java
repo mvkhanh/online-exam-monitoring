@@ -77,6 +77,8 @@ public class StudentInContest extends JFrame implements NativeKeyListener {
 		add(topPn, BorderLayout.NORTH);
 		add(chatPn, BorderLayout.EAST);
 
+		setTitle("Màn hình cuộc thi");
+		
 		setSize(new Dimension(1000, 700));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);

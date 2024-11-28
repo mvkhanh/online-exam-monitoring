@@ -58,6 +58,8 @@ public class Home extends javax.swing.JFrame {
 		jLabel2.setText("Ứng dụng livstream giám sát cuộc thi online");
 		jPanel2.add(jLabel2, java.awt.BorderLayout.CENTER);
 
+		setTitle("Trang chủ");
+		
 		getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
 	}// </editor-fold>

@@ -101,6 +101,8 @@ public class Register extends javax.swing.JFrame {
 						.addComponent(jLabel3))
 				.addContainerGap(109, Short.MAX_VALUE)));
 
+		setTitle("Đăng ký");
+		
 		pack();
 	}
 

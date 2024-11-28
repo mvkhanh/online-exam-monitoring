@@ -71,6 +71,8 @@ public class TeacherInContest extends JFrame {
 		add(center, BorderLayout.CENTER);
 		add(rightPn, BorderLayout.EAST);
 
+		setTitle("Màn hình cuộc thi");
+		
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);

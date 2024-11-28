@@ -120,6 +120,8 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addContainerGap(109, Short.MAX_VALUE))
         );
+        
+        setTitle("Đăng nhập");
 
         pack();
     }                     
