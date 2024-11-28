@@ -20,7 +20,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
+import org.opencv.videoio.Videoio;
 
 import pbl4.Server.Constant;
 import pbl4.Server.Server;
@@ -114,6 +116,9 @@ public class TCPHandler implements Runnable {
 			case 'V': // luu video
 				saveVideo(message, input);
 				break;
+			case 'G': // gui video
+				sendVideo(message, output);
+				break;
 			default:
 				break;
 			}
@@ -129,10 +134,52 @@ public class TCPHandler implements Runnable {
 		}
 	}
 
+	private void sendVideo(String message, DataOutputStream output) {
+		// G,participant_id,typeVideo
+		String splitMsg[] = message.split(",");
+		String participant_id = splitMsg[1];
+		String typeVideo = splitMsg[2];
+
+		String folderPath = Constant.FILE_LOCATION + File.separator + "Record" + File.separator + participant_id
+				+ File.separator + "output" + typeVideo + ".mp4";
+
+		VideoCapture capture = new VideoCapture(folderPath);
+
+		try {
+			if (capture.isOpened())
+				output.writeBoolean(true);
+			else
+				output.writeBoolean(false);
+			
+			int totalFrame = (int) capture.get(Videoio.CAP_PROP_FRAME_COUNT);
+			int fps = (int) capture.get(Videoio.CAP_PROP_FPS);
+			
+			output.writeInt(totalFrame);
+			output.writeInt(fps);
+			
+			Mat frame = new Mat();
+			while (capture.read(frame)) {
+				MatOfByte buffer = new MatOfByte();
+				Imgcodecs.imencode(".jpg", frame, buffer);
+				byte[] imageBytes = buffer.toArray();
+
+				output.writeInt(imageBytes.length); // Gửi kích thước
+
+				output.write(imageBytes); // Gửi dữ liệu
+
+				output.flush();
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		capture.release();
+	}
 
 	private void saveVideo(String message, DataInputStream input) {
 		long start = System.nanoTime();
-		
+
 		Size size = null;
 		int length = 0;
 		try {
@@ -146,10 +193,10 @@ public class TCPHandler implements Runnable {
 		int typeVideo = Integer.parseInt(splitMsg[1]);
 		String participant_id = splitMsg[2];
 		Queue<byte[]> imageBytes = new ConcurrentLinkedQueue<byte[]>();
-		
-		new SaveVideoThread(imageBytes, length, typeVideo, participant_id, size).start();;
-		for(int i=0; i<length; i++) {
-			try { 
+
+		new SaveVideoThread(imageBytes, length, typeVideo, participant_id, size).start();
+		for (int i = 0; i < length; i++) {
+			try {
 				int bytesLength = input.readInt();
 				if (bytesLength > 0) {
 					byte[] receiveImageBytes = new byte[bytesLength];
@@ -162,7 +209,7 @@ public class TCPHandler implements Runnable {
 				break;
 			}
 		}
-		
+
 		System.out.println("Nhan: " + ((System.nanoTime() - start) * 0.00000001));
 	}
 

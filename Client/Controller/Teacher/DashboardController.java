@@ -2,6 +2,7 @@ package pbl4.Client.Controller.Teacher;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -15,6 +16,7 @@ import pbl4.Client.DTO.OutContest.User;
 import pbl4.Client.Utils.Service;
 import pbl4.Client.View.Home;
 import pbl4.Client.View.TeacherDashboard;
+import pbl4.Client.View.VideoPlayer;
 import pbl4.Client.View.KeyLog.KeyLog;
 
 public class DashboardController {
@@ -33,6 +35,37 @@ public class DashboardController {
 	}
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	public void getVideo(int typeVideo) {
+		List<byte[]> videoData = new ArrayList<byte[]>();
+		Integer totalFrame = 0, fps = 0;
+		String sendMsg = "G," + view.participant_id + "," + typeVideo;
+		Socket soc;
+		DataInputStream dis;
+		DataOutputStream dos;
+
+		try {
+			soc = new Socket(Constant.serverAddress, Constant.tcpPort);
+			dis = new DataInputStream(soc.getInputStream());
+			dos = new DataOutputStream(soc.getOutputStream());
+			dos.writeUTF(sendMsg);
+
+			if (!dis.readBoolean()) {
+				System.out.println("Khong tim thay video");
+				return;
+			}
+
+			totalFrame = dis.readInt();
+			fps = dis.readInt();
+
+			view.setVisible(false);
+			new VideoPlayer(videoData, totalFrame, fps, this);
+			new receiveVideo(totalFrame, dis, videoData, soc, dos).start();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+	}
 
 	public List<Test> getListLSCT() {
 		List<Test> listData = new ArrayList<Test>();
@@ -126,6 +159,48 @@ public class DashboardController {
 			String receiveMsg = dis.readUTF();
 			new KeyLog(receiveMsg);
 		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+}
+
+class receiveVideo extends Thread {
+	int totalFrame;
+	DataInputStream dis;
+	List<byte[]> videoData;
+	DataOutputStream dos;
+	Socket soc;
+
+	public receiveVideo(int totalFrame, DataInputStream dis, List<byte[]> videoData, Socket soc, DataOutputStream dos) {
+		super();
+		this.totalFrame = totalFrame;
+		this.dis = dis;
+		this.videoData = videoData;
+		this.soc = soc;
+		this.dos = dos;
+	}
+
+	@Override
+	public void run() {
+		for (int i = 0; i < totalFrame; i++) {
+			try {
+				int bytesLength = dis.readInt();
+				if (bytesLength > 0) {
+					byte[] receiveImageBytes = new byte[bytesLength];
+
+					dis.readFully(receiveImageBytes);
+
+					videoData.add(receiveImageBytes);
+				}
+			} catch (IOException ex) {
+				break;
+			}
+		}
+		try {
+			dis.close();
+			dos.close();
+			soc.close();
+		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
 	}

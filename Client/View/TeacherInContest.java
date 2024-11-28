@@ -36,8 +36,9 @@ public class TeacherInContest extends JFrame {
 		setLayout(new BorderLayout());
 
 		JPanel topPn = new JPanel(new FlowLayout());
-		topPn.add(new JLabel("Contest Name:" + controller.name));
-		topPn.add(new JLabel("Room ID:" + controller.roomId));
+		topPn.add(new JLabel("Contest name: " + controller.name));
+		topPn.add(new JLabel("||"));
+		topPn.add(new JLabel("Room ID: " + controller.roomId));
 
 		JScrollPane mainPn = new JScrollPane();
 		cameras = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
@@ -62,9 +63,12 @@ public class TeacherInContest extends JFrame {
 			}
 		});
 
-		add(bottomCenterPanel, BorderLayout.SOUTH);
-		add(mainPn, BorderLayout.CENTER);
-		add(topPn, BorderLayout.NORTH);
+		JPanel center = new JPanel(new BorderLayout());
+		
+		center.add(bottomCenterPanel, BorderLayout.SOUTH);
+		center.add(mainPn, BorderLayout.CENTER);
+		center.add(topPn, BorderLayout.NORTH);
+		add(center, BorderLayout.CENTER);
 		add(rightPn, BorderLayout.EAST);
 
 		setExtendedState(JFrame.MAXIMIZED_BOTH);

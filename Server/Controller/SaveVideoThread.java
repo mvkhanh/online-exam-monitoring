@@ -7,7 +7,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Queue;
 
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import pbl4.Server.Constant;
 
@@ -30,7 +34,7 @@ public class SaveVideoThread extends Thread {
 		if (typeVideo == 1)
 			this.fps = 30;
 		else
-			this.fps = 18;
+			this.fps = 14;
 	}
 
 	@Override
@@ -43,8 +47,6 @@ public class SaveVideoThread extends Thread {
 	}
 
 	void processFunc() throws Exception {
-		long start = System.nanoTime();
-		
 		String folderPath = Constant.FILE_LOCATION + File.separator + "Record" + File.separator + participant_id
 				+ File.separator;
 		File folder = new File(folderPath);
@@ -147,9 +149,5 @@ public class SaveVideoThread extends Thread {
 		tempVideoFile.delete();
 
 		System.out.println("Video updated successfully: " + finalVideoPath);
-
-		System.out.println((System.nanoTime() - start) * 0.00000001);
-		
 	}
-
 }
