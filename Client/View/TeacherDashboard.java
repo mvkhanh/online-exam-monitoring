@@ -5,6 +5,7 @@
 package pbl4.Client.View;
 
 import java.awt.CardLayout;
+import java.awt.FlowLayout;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -333,17 +334,42 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		JButton backButton1 = new JButton("Quay lại");
 		backButton1.addActionListener(e -> {
 			cardLayout.show(mainPanel, "CTCT"); // Quay lại màn hình "CTCT"
+			teacherController.camera = null;
+			teacherController.screen = null;
 		});
 
+		JButton downloadClipButton = new JButton("Download");
+		downloadClipButton.addActionListener(e -> {
+			teacherController.downloadVideo(2);
+		});
+		
 		// Tạo nút dạng "clip"
 		JButton clipButton = new JButton("Record screen"); // Biểu tượng clip
 		clipButton.addActionListener(e -> {
-			teacherController.getVideo(2);
+			teacherController.getVideoView(2);
 		});
+		
+		JPanel clipPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		clipPanel.add(clipButton);
+		clipPanel.add(downloadClipButton);
 
+		JButton downloadCameraButton = new JButton("Download");
+		downloadCameraButton.addActionListener(e -> {
+			teacherController.downloadVideo(1);
+		});
+		
 		JButton clipCameraButton = new JButton("Record camera");
 		clipCameraButton.addActionListener(e -> {
-			teacherController.getVideo(1);
+			teacherController.getVideoView(1);
+		});
+		
+		JPanel cameraPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		cameraPanel.add(clipCameraButton);
+		cameraPanel.add(downloadCameraButton);
+		
+		JButton downloadFileButton = new JButton("Download");
+		downloadFileButton.addActionListener(e -> {
+
 		});
 
 		// Tạo nút dạng "file txt"
@@ -351,29 +377,40 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		fileButton.addActionListener(e -> {
 			teacherController.showKeys(participant_id);
 		});
+		
+		JPanel filePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		filePanel.add(fileButton);
+		filePanel.add(downloadFileButton);
 
-		// Thiết lập bố cục ngang
-		detailFormLayout.setHorizontalGroup(detailFormLayout.createSequentialGroup().addContainerGap()
-				.addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(detailFormLayout.createSequentialGroup().addComponent(backButton1,
-								javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addGroup(detailFormLayout.createSequentialGroup()
-								.addComponent(clipButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(clipCameraButton, javax.swing.GroupLayout.PREFERRED_SIZE, 150,
-										javax.swing.GroupLayout.PREFERRED_SIZE)))
-				.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+		// Horizontal Group
+		detailFormLayout.setHorizontalGroup(
+		    detailFormLayout.createSequentialGroup()
+		        .addContainerGap()
+		        .addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		            .addComponent(backButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+		            .addGroup(detailFormLayout.createSequentialGroup()
+		                .addComponent(clipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+		                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+		                .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+		                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+		                .addComponent(filePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)))
+		        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		);
 
-		// Thiết lập bố cục dọc
-		detailFormLayout.setVerticalGroup(detailFormLayout.createSequentialGroup().addContainerGap()
-				.addComponent(backButton1).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-				.addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(clipButton).addComponent(fileButton).addComponent(clipCameraButton))
-				.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+		// Vertical Group
+		detailFormLayout.setVerticalGroup(
+		    detailFormLayout.createSequentialGroup()
+		        .addContainerGap()
+		        .addComponent(backButton1) // Nút "Quay lại"
+		        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+		        .addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		            .addComponent(clipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+		            .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+		            .addComponent(filePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+		        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		);
+
+
 
 		// Thêm form này vào mainPanel
 		mainPanel.add(detailForm, "DetailForm");

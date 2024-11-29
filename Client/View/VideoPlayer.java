@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,6 +16,7 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
 import pbl4.Client.Controller.Teacher.DashboardController;
+import pbl4.Client.DTO.OutContest.VideoModel;
 
 public class VideoPlayer extends JFrame {
 
@@ -24,10 +24,7 @@ public class VideoPlayer extends JFrame {
 
 	DashboardController par;
 
-	// receive video data
-	private List<byte[]> frameData;
-	private int totalFrame;
-	private int fps; // received video's fps
+	public VideoModel videoModel;
 
 	int changeFps;
 
@@ -37,40 +34,40 @@ public class VideoPlayer extends JFrame {
 
 	// ok
 	private void fastAction() {
-		if (currentFps == fps + changeFps) {
-			currentFps = fps;
+		if (currentFps == videoModel.fps + changeFps) {
+			currentFps = videoModel.fps;
 			slow.setEnabled(true);
 		} else {
-			currentFps = fps - changeFps;
+			currentFps = videoModel.fps - changeFps;
 			fast.setEnabled(false);
 		}
 	}
 
 	// ok
 	private void slowAction() {
-		if (currentFps == fps - changeFps) {
-			currentFps = fps;
+		if (currentFps == videoModel.fps - changeFps) {
+			currentFps = videoModel.fps;
 			fast.setEnabled(true);
 		} else {
-			currentFps = fps + changeFps;
+			currentFps = videoModel.fps + changeFps;
 			slow.setEnabled(false);
 		}
 	}
 
 	// ok
 	private void skip5Action() {
-		currentIndex += fps * 5;
-		if (currentIndex >= totalFrame)
-			currentIndex = totalFrame - 1;
-		slider.setValue((currentIndex + 1) / fps);
+		currentIndex += videoModel.fps * 5;
+		if (currentIndex >= videoModel.totalFrame)
+			currentIndex = videoModel.totalFrame - 1;
+		slider.setValue((currentIndex + 1) / videoModel.fps);
 	}
 
 	// ok
 	private void back5Action() {
-		currentIndex -= fps * 5;
+		currentIndex -= videoModel.fps * 5;
 		if (currentIndex < 0)
 			currentIndex = 0;
-		slider.setValue((currentIndex + 1) / fps);
+		slider.setValue((currentIndex + 1) / videoModel.fps);
 	}
 
 	private void playAction() {
@@ -83,10 +80,10 @@ public class VideoPlayer extends JFrame {
 			isPlaying = true;
 			pause.setEnabled(true);
 			play.setEnabled(false);
-			while (isPlaying && currentIndex < totalFrame) {
-				slider.setValue((currentIndex + 1) / fps);
+			while (isPlaying && currentIndex < videoModel.totalFrame) {
+				slider.setValue((currentIndex + 1) / videoModel.fps);
 
-				if (currentIndex >= frameData.size()) {
+				if (currentIndex >= videoModel.videoData.size()) {
 					screen.setIcon(null);
 					screen.setText("Loading");
 					try {
@@ -97,9 +94,9 @@ public class VideoPlayer extends JFrame {
 					screen.setText("");
 					continue;
 				} else {
-					screen.setIcon(new ImageIcon(frameData.get(currentIndex++)));
+					screen.setIcon(new ImageIcon(videoModel.videoData.get(currentIndex++)));
 					try {
-						System.out.println(currentFps);
+//						System.out.println(currentFps);
 						Thread.sleep(currentFps);
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -117,25 +114,23 @@ public class VideoPlayer extends JFrame {
 	}
 
 	private void sliderAction() {
-		currentIndex = slider.getValue() * fps - 1;
+		currentIndex = slider.getValue() * videoModel.fps - 1;
 		if (currentIndex < 0)
 			currentIndex = 0;
-		else if (currentIndex >= totalFrame)
-			currentIndex = totalFrame - 1;
+		else if (currentIndex >= videoModel.totalFrame)
+			currentIndex = videoModel.totalFrame - 1;
 	}
 
-	public VideoPlayer(List<byte[]> frameData, int totalFrame, int fps, DashboardController par)
+	public VideoPlayer(VideoModel videoModel, DashboardController par)
 			throws HeadlessException {
-		this.frameData = frameData;
-		this.totalFrame = totalFrame;
-		this.fps = fps;
+		this.videoModel = videoModel;
 		this.par = par;
 
-		slider = new JSlider(0, totalFrame / fps, 0);
+		slider = new JSlider(0, videoModel.totalFrame / videoModel.fps, 0);
 		screen.setPreferredSize(thisComputerDimesion);
-		currentFps = fps;
+		currentFps = videoModel.fps;
 
-		changeFps = fps / 2;
+		changeFps = videoModel.fps / 2;
 
 		// Gắn ActionListener cho các nút
 		fast.addActionListener(e -> fastAction());
@@ -168,7 +163,7 @@ public class VideoPlayer extends JFrame {
 		slider.setPreferredSize(new Dimension(400, 50));
 
 		setTitle("Xem video");
-		
+
 		JPanel panel4 = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		panel4.add(screen);
 		add(panel4, BorderLayout.CENTER);
@@ -180,6 +175,10 @@ public class VideoPlayer extends JFrame {
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setVisible(true);
+	}
+
+	public static void main(String[] args) {
+//		System.out.println(chooseFolderPath());
 	}
 
 	private void backAction() {

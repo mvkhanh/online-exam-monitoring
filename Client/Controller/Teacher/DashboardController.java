@@ -1,18 +1,26 @@
 package pbl4.Client.Controller.Teacher;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 import pbl4.Client.Constant;
 import pbl4.Client.DTO.OutContest.Participant;
 import pbl4.Client.DTO.OutContest.Test;
 import pbl4.Client.DTO.OutContest.User;
+import pbl4.Client.DTO.OutContest.VideoModel;
 import pbl4.Client.Utils.Service;
 import pbl4.Client.View.Home;
 import pbl4.Client.View.TeacherDashboard;
@@ -23,6 +31,9 @@ public class DashboardController {
 	public User user;
 	private DatagramSocket udpStreamSocket;
 	public TeacherDashboard view;
+
+	public VideoModel camera = null;
+	public VideoModel screen = null;
 
 	public DashboardController(User user) {
 		this.user = user;
@@ -36,9 +47,18 @@ public class DashboardController {
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public void getVideo(int typeVideo) {
-		List<byte[]> videoData = new ArrayList<byte[]>();
-		Integer totalFrame = 0, fps = 0;
+	public void getVideoData(int typeVideo) {
+
+		VideoModel tmp = new VideoModel();
+
+		if (typeVideo == 1) {
+			camera = tmp;
+		} else {
+			screen = tmp;
+		}
+
+		tmp.videoData = new ArrayList<byte[]>();
+
 		String sendMsg = "G," + view.participant_id + "," + typeVideo;
 		Socket soc;
 		DataInputStream dis;
@@ -52,19 +72,48 @@ public class DashboardController {
 
 			if (!dis.readBoolean()) {
 				System.out.println("Khong tim thay video");
+				soc.close();
+				dis.close();
+				dos.close();
 				return;
 			}
 
-			totalFrame = dis.readInt();
-			fps = dis.readInt();
+			tmp.totalFrame = dis.readInt();
+			tmp.fps = dis.readInt();
 
-			view.setVisible(false);
-			new VideoPlayer(videoData, totalFrame, fps, this);
-			new receiveVideo(totalFrame, dis, videoData, soc, dos).start();
+//			new VideoPlayer(videoData, totalFrame, fps, this);
+			new receiveVideo(tmp.totalFrame, dis, tmp.videoData, soc, dos).start();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
+	}
+
+	public void getVideoView(int typeVideo) {
+		if (typeVideo == 1) {
+			if(camera == null)
+				getVideoData(typeVideo);
+			view.setVisible(false);
+			new VideoPlayer(camera, this);
+		} else {
+			if(screen == null)
+				getVideoData(typeVideo);
+			view.setVisible(false);
+			new VideoPlayer(screen, this);
+		}
+	}
+	
+	public void downloadVideo(int typeVideo) {
+		if(typeVideo == 1) {
+			if(camera == null)
+				getVideoData(typeVideo);
+			new downloadThread(camera).start();
+		}
+		else {
+			if(screen == null)
+				getVideoData(typeVideo);
+			new downloadThread(screen).start();
+		}
 	}
 
 	public List<Test> getListLSCT() {
@@ -162,6 +211,7 @@ public class DashboardController {
 			ex.printStackTrace();
 		}
 	}
+	
 }
 
 class receiveVideo extends Thread {
@@ -200,8 +250,135 @@ class receiveVideo extends Thread {
 			dis.close();
 			dos.close();
 			soc.close();
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+}
+
+class downloadThread extends Thread {
+
+	public static void saveImage(byte[] imageBytes, String filePath) throws IOException {
+		File file = new File(filePath);
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+			fos.write(imageBytes);
+		}
+	}
+
+	public static void createVideo(String imagesDirectory, String outputVideoPath, int framerate)
+			throws IOException {
+		// Câu lệnh FFmpeg
+		String ffmpegCommand = String.format(
+				"ffmpeg -framerate %d -i %s/frame%%d.jpg -c:v libx264 -pix_fmt yuv420p -movflags +faststart %s",
+				framerate, imagesDirectory, outputVideoPath);
+
+		Process process = Runtime.getRuntime().exec(ffmpegCommand);
+
+		try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+			String line;
+			while ((line = errorReader.readLine()) != null) {
+				System.err.println(line);
+			}
+		}
+
+		try {
+			int exitCode = process.waitFor();
+			if (exitCode == 0) {
+				JOptionPane.showMessageDialog(null, "Video đã được tạo thành công: " + outputVideoPath,
+						"Thành công", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(null, "Lỗi khi tạo video, mã thoát: " + exitCode, "Lỗi",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IOException("Quá trình bị gián đoạn", e);
+		}
+	}
+
+	public VideoModel videoModel;
+	
+	public downloadThread(VideoModel videoModel) {
+		this.videoModel = videoModel;
+	}
+
+	@Override
+	public void run() {
+
+		String folderPathChoosen = chooseFolderPath();
+
+		if (folderPathChoosen != null) {
+			JOptionPane.showMessageDialog(null, "Video đang được tải tại thư mục " + folderPathChoosen,
+					"Thông báo tải video", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Bạn chưa chọn thư mục",
+					"Thông báo tải video", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+
+		String folderPath = folderPathChoosen + File.separator;
+
+		// thư mục lưu ảnh tạm thời
+		String imagesDirectory = folderPath + "images";
+		File imagesDirectoryFile = new File(imagesDirectory);
+		for (int i = 0; imagesDirectoryFile.exists(); i++) {
+			imagesDirectory = folderPath + "images" + i;
+			imagesDirectoryFile = new File(imagesDirectory);
+		}
+		imagesDirectoryFile.mkdir();
+
+		// lưu từng ảnh
+		for (int i = 0; i < videoModel.totalFrame; i++) {
+			try {
+				if (i < videoModel.videoData.size()) {
+					String filePath = String.format("%s/frame%d.jpg", imagesDirectory, i);
+					saveImage(videoModel.videoData.get(i), filePath);
+				} else {
+					Thread.sleep(1);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		// Tạo video từ ảnh
+		String outputVideoPath = folderPath + "output.mp4";
+		File outputVideoFile = new File(outputVideoPath);
+		for (int i = 0; outputVideoFile.exists(); i++) {
+			outputVideoPath = folderPath + "output.mp4" + i;
+			outputVideoFile = new File(outputVideoPath);
+		}
+		try {
+			createVideo(imagesDirectory, outputVideoPath, videoModel.fps);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		for(File file : imagesDirectoryFile.listFiles()) {
+			file.delete();
+		}
+		
+		imagesDirectoryFile.delete();
+	}
+	
+	public static String chooseFolderPath() {
+		// Tạo JFileChooser
+		JFileChooser chooser = new JFileChooser();
+
+		// Chỉ cho phép chọn thư mục
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		// Hiển thị hộp thoại chọn thư mục
+		int result = chooser.showOpenDialog(null);
+
+		if (result == JFileChooser.APPROVE_OPTION) {
+			// Lấy thư mục đã chọn
+			File selectedDirectory = chooser.getSelectedFile();
+			return selectedDirectory.getAbsolutePath();
+
+		} else {
+			return null;
 		}
 	}
 }
