@@ -49,7 +49,7 @@ public class TCPHandler implements Runnable {
 	public void run() {
 		try (DataInputStream input = new DataInputStream(socket.getInputStream());
 				DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
-			String message = input.readUTF();
+			String message = input.readUTF(); 
 			char msgCode = message.charAt(0);
 			String[] msges;
 			switch (msgCode) {

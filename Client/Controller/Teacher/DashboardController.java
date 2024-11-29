@@ -1,12 +1,8 @@
 package pbl4.Client.Controller.Teacher;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -22,6 +18,7 @@ import pbl4.Client.DTO.OutContest.Test;
 import pbl4.Client.DTO.OutContest.User;
 import pbl4.Client.DTO.OutContest.VideoModel;
 import pbl4.Client.Utils.Service;
+import pbl4.Client.View.DownloadProgress;
 import pbl4.Client.View.Home;
 import pbl4.Client.View.TeacherDashboard;
 import pbl4.Client.View.VideoPlayer;
@@ -32,6 +29,8 @@ public class DashboardController {
 	private DatagramSocket udpStreamSocket;
 	public TeacherDashboard view;
 
+	public DownloadProgress downloadProgress = new DownloadProgress();
+	
 	public VideoModel camera = null;
 	public VideoModel screen = null;
 
@@ -47,10 +46,17 @@ public class DashboardController {
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+	public void viewDownloadProgress() {
+		downloadProgress.setVisible(true);
+	}
+	
 	public void getVideoData(int typeVideo) {
 
 		VideoModel tmp = new VideoModel();
 
+		tmp.name = "Video của học sinh '" + view.participant_name + "' có id là '" + view.participant_id + "'";
+		tmp.label.setText(tmp.name + " | Tiến độ dữ liệu video từ Server: 0% | Tiến độ tải xuống video: 0%");
+		
 		if (typeVideo == 1) {
 			camera = tmp;
 		} else {
@@ -82,7 +88,7 @@ public class DashboardController {
 			tmp.fps = dis.readInt();
 
 //			new VideoPlayer(videoData, totalFrame, fps, this);
-			new receiveVideo(tmp.totalFrame, dis, tmp.videoData, soc, dos).start();
+			new ReceiveVideoThread(tmp.totalFrame, dis, tmp.videoData, soc, dos, tmp.label).start();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -93,12 +99,16 @@ public class DashboardController {
 		if (typeVideo == 1) {
 			if(camera == null)
 				getVideoData(typeVideo);
+			
 			view.setVisible(false);
+			
 			new VideoPlayer(camera, this);
 		} else {
 			if(screen == null)
 				getVideoData(typeVideo);
+			
 			view.setVisible(false);
+			
 			new VideoPlayer(screen, this);
 		}
 	}
@@ -107,12 +117,18 @@ public class DashboardController {
 		if(typeVideo == 1) {
 			if(camera == null)
 				getVideoData(typeVideo);
-			new downloadThread(camera).start();
+			else
+				camera.label.setText(camera.name + " | Tiến độ dữ liệu video từ Server: 100% | Tiến độ tải xuống video: 0%");
+			downloadProgress.addProgress(camera.label);
+			new DownloadVideoThread(camera).start();
 		}
 		else {
 			if(screen == null)
 				getVideoData(typeVideo);
-			new downloadThread(screen).start();
+			else
+				screen.label.setText(screen.name + " | Tiến độ dữ liệu video từ Server: 100% | Tiến độ tải xuống video: 0%");
+			downloadProgress.addProgress(screen.label);
+			new DownloadVideoThread(screen).start();
 		}
 	}
 
@@ -209,176 +225,6 @@ public class DashboardController {
 			new KeyLog(receiveMsg);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-	}
-	
-}
-
-class receiveVideo extends Thread {
-	int totalFrame;
-	DataInputStream dis;
-	List<byte[]> videoData;
-	DataOutputStream dos;
-	Socket soc;
-
-	public receiveVideo(int totalFrame, DataInputStream dis, List<byte[]> videoData, Socket soc, DataOutputStream dos) {
-		super();
-		this.totalFrame = totalFrame;
-		this.dis = dis;
-		this.videoData = videoData;
-		this.soc = soc;
-		this.dos = dos;
-	}
-
-	@Override
-	public void run() {
-		for (int i = 0; i < totalFrame; i++) {
-			try {
-				int bytesLength = dis.readInt();
-				if (bytesLength > 0) {
-					byte[] receiveImageBytes = new byte[bytesLength];
-
-					dis.readFully(receiveImageBytes);
-
-					videoData.add(receiveImageBytes);
-				}
-			} catch (IOException ex) {
-				break;
-			}
-		}
-		try {
-			dis.close();
-			dos.close();
-			soc.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-}
-
-class downloadThread extends Thread {
-
-	public static void saveImage(byte[] imageBytes, String filePath) throws IOException {
-		File file = new File(filePath);
-		try (FileOutputStream fos = new FileOutputStream(file)) {
-			fos.write(imageBytes);
-		}
-	}
-
-	public static void createVideo(String imagesDirectory, String outputVideoPath, int framerate)
-			throws IOException {
-		// Câu lệnh FFmpeg
-		String ffmpegCommand = String.format(
-				"ffmpeg -framerate %d -i %s/frame%%d.jpg -c:v libx264 -pix_fmt yuv420p -movflags +faststart %s",
-				framerate, imagesDirectory, outputVideoPath);
-
-		Process process = Runtime.getRuntime().exec(ffmpegCommand);
-
-		try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
-			String line;
-			while ((line = errorReader.readLine()) != null) {
-				System.err.println(line);
-			}
-		}
-
-		try {
-			int exitCode = process.waitFor();
-			if (exitCode == 0) {
-				JOptionPane.showMessageDialog(null, "Video đã được tạo thành công: " + outputVideoPath,
-						"Thành công", JOptionPane.INFORMATION_MESSAGE);
-			} else {
-				JOptionPane.showMessageDialog(null, "Lỗi khi tạo video, mã thoát: " + exitCode, "Lỗi",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new IOException("Quá trình bị gián đoạn", e);
-		}
-	}
-
-	public VideoModel videoModel;
-	
-	public downloadThread(VideoModel videoModel) {
-		this.videoModel = videoModel;
-	}
-
-	@Override
-	public void run() {
-
-		String folderPathChoosen = chooseFolderPath();
-
-		if (folderPathChoosen != null) {
-			JOptionPane.showMessageDialog(null, "Video đang được tải tại thư mục " + folderPathChoosen,
-					"Thông báo tải video", JOptionPane.INFORMATION_MESSAGE);
-		}
-		else {
-			JOptionPane.showMessageDialog(null, "Bạn chưa chọn thư mục",
-					"Thông báo tải video", JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-
-		String folderPath = folderPathChoosen + File.separator;
-
-		// thư mục lưu ảnh tạm thời
-		String imagesDirectory = folderPath + "images";
-		File imagesDirectoryFile = new File(imagesDirectory);
-		for (int i = 0; imagesDirectoryFile.exists(); i++) {
-			imagesDirectory = folderPath + "images" + i;
-			imagesDirectoryFile = new File(imagesDirectory);
-		}
-		imagesDirectoryFile.mkdir();
-
-		// lưu từng ảnh
-		for (int i = 0; i < videoModel.totalFrame; i++) {
-			try {
-				if (i < videoModel.videoData.size()) {
-					String filePath = String.format("%s/frame%d.jpg", imagesDirectory, i);
-					saveImage(videoModel.videoData.get(i), filePath);
-				} else {
-					Thread.sleep(1);
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-
-		// Tạo video từ ảnh
-		String outputVideoPath = folderPath + "output.mp4";
-		File outputVideoFile = new File(outputVideoPath);
-		for (int i = 0; outputVideoFile.exists(); i++) {
-			outputVideoPath = folderPath + "output.mp4" + i;
-			outputVideoFile = new File(outputVideoPath);
-		}
-		try {
-			createVideo(imagesDirectory, outputVideoPath, videoModel.fps);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		for(File file : imagesDirectoryFile.listFiles()) {
-			file.delete();
-		}
-		
-		imagesDirectoryFile.delete();
-	}
-	
-	public static String chooseFolderPath() {
-		// Tạo JFileChooser
-		JFileChooser chooser = new JFileChooser();
-
-		// Chỉ cho phép chọn thư mục
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-		// Hiển thị hộp thoại chọn thư mục
-		int result = chooser.showOpenDialog(null);
-
-		if (result == JFileChooser.APPROVE_OPTION) {
-			// Lấy thư mục đã chọn
-			File selectedDirectory = chooser.getSelectedFile();
-			return selectedDirectory.getAbsolutePath();
-
-		} else {
-			return null;
 		}
 	}
 }

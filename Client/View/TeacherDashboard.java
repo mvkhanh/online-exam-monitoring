@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,10 +39,10 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		jPanel1 = new javax.swing.JPanel();
 		jLabel1 = new javax.swing.JLabel();
 		jLabel2 = new javax.swing.JLabel();
-		trangchu = new java.awt.Button();
-		lsct = new java.awt.Button();
-		nguoidung = new java.awt.Button();
-		dangxuat = new java.awt.Button();
+		trangchu = new JButton();
+		lsct = new JButton();
+		nguoidung = new JButton();
+		dangxuat = new JButton();
 		mainPanel = new javax.swing.JPanel();
 		trangchuForm = new javax.swing.JPanel();
 		tencuocthi = new javax.swing.JTextField();
@@ -61,6 +62,7 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		camera = new javax.swing.JLabel();
 		jScrollPane4 = new javax.swing.JScrollPane();
 		jTextArea1 = new javax.swing.JTextArea();
+		xemtientrinhtai = new JButton();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,7 +70,6 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
 		jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-//        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/javaapplication2/images.png"))); // NOI18N
 		jLabel1.setText("Hình ảnh người dùng");
 		jLabel1.setPreferredSize(new java.awt.Dimension(300, 250));
 
@@ -99,6 +100,12 @@ public class TeacherDashboard extends javax.swing.JFrame {
 				nguoidungActionPerformed(evt);
 			}
 		});
+		
+		xemtientrinhtai.setBackground(new java.awt.Color(204, 204, 204));
+		xemtientrinhtai.setLabel("Xem tiến trình tải");
+		xemtientrinhtai.addActionListener(e -> {
+			teacherController.viewDownloadProgress();
+		});
 
 		dangxuat.setBackground(new java.awt.Color(255, 51, 51));
 		dangxuat.setForeground(new java.awt.Color(51, 51, 51));
@@ -117,6 +124,8 @@ public class TeacherDashboard extends javax.swing.JFrame {
 				.addComponent(trangchu, javax.swing.GroupLayout.Alignment.TRAILING,
 						javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(nguoidung, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+						Short.MAX_VALUE)
+				.addComponent(xemtientrinhtai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
 						Short.MAX_VALUE)
 				.addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE,
 						javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -139,8 +148,11 @@ public class TeacherDashboard extends javax.swing.JFrame {
 						.addGap(1, 1, 1)
 						.addComponent(lsct, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGap(2, 2, 2)
+						.addGap(1, 1, 1)
 						.addComponent(nguoidung, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(1, 1, 1)
+						.addComponent(xemtientrinhtai, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
 						.addComponent(dangxuat, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
@@ -278,16 +290,16 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		ctctForm.setLayout(ctctFormLayout);
 
 		// Tạo các nút
-		JButton backButton = new JButton("Quay lại");
-		JButton detailsButton = new JButton("Xem chi tiết");
+		JButton backJButton = new JButton("Quay lại");
+		JButton detailsJButton = new JButton("Xem chi tiết");
 
 		// Thêm sự kiện cho nút quay lại
-		backButton.addActionListener(e -> {
+		backJButton.addActionListener(e -> {
 			cardLayout.show(mainPanel, "LSCT");
 		});
 
 		// Thêm sự kiện cho nút xem chi tiết
-		detailsButton.addActionListener(e -> {
+		detailsJButton.addActionListener(e -> {
 
 			int row = ctct_jtable.getSelectedRow();
 			if (row == -1) {
@@ -295,7 +307,10 @@ public class TeacherDashboard extends javax.swing.JFrame {
 						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
+			
 			participant_id = ptcp_model.getParticipantAt(row).getId();
+			participant_name = ptcp_model.getParticipantAt(row).getName();
+
 			cardLayout.show(mainPanel, "DetailForm");
 		});
 
@@ -308,10 +323,10 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		ctctFormLayout.setHorizontalGroup(ctctFormLayout.createSequentialGroup().addContainerGap()
 				.addGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 						.addGroup(ctctFormLayout.createSequentialGroup()
-								.addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+								.addComponent(backJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(detailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+								.addComponent(detailsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
 										javax.swing.GroupLayout.PREFERRED_SIZE))
 						.addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
 				.addContainerGap());
@@ -319,7 +334,7 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		// Thiết lập bố cục dọc
 		ctctFormLayout.setVerticalGroup(ctctFormLayout.createSequentialGroup().addContainerGap()
 				.addGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(backButton).addComponent(detailsButton))
+						.addComponent(backJButton).addComponent(detailsJButton))
 				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 				.addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
 				.addContainerGap());
@@ -331,84 +346,88 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		detailForm.setLayout(detailFormLayout);
 
 		// Tạo nút "Quay lại"
-		JButton backButton1 = new JButton("Quay lại");
-		backButton1.addActionListener(e -> {
+		JButton backJButton1 = new JButton("Quay lại");
+		backJButton1.addActionListener(e -> {
 			cardLayout.show(mainPanel, "CTCT"); // Quay lại màn hình "CTCT"
 			teacherController.camera = null;
 			teacherController.screen = null;
 		});
 
-		JButton downloadClipButton = new JButton("Download");
-		downloadClipButton.addActionListener(e -> {
+		JButton downloadClipJButton = new JButton("Download");
+		downloadClipJButton.addActionListener(e -> {
 			teacherController.downloadVideo(2);
 		});
 		
 		// Tạo nút dạng "clip"
-		JButton clipButton = new JButton("Record screen"); // Biểu tượng clip
-		clipButton.addActionListener(e -> {
+		JButton clipJButton = new JButton("Record screen"); // Biểu tượng clip
+		clipJButton.addActionListener(e -> {
 			teacherController.getVideoView(2);
 		});
 		
 		JPanel clipPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-		clipPanel.add(clipButton);
-		clipPanel.add(downloadClipButton);
+		clipPanel.add(new JLabel("Screen:"));
+		clipPanel.add(clipJButton);
+		clipPanel.add(downloadClipJButton);
 
-		JButton downloadCameraButton = new JButton("Download");
-		downloadCameraButton.addActionListener(e -> {
+		JButton downloadCameraJButton = new JButton("Download");
+		downloadCameraJButton.addActionListener(e -> {
 			teacherController.downloadVideo(1);
 		});
 		
-		JButton clipCameraButton = new JButton("Record camera");
-		clipCameraButton.addActionListener(e -> {
+		JButton clipCameraJButton = new JButton("Record camera");
+		clipCameraJButton.addActionListener(e -> {
 			teacherController.getVideoView(1);
 		});
 		
 		JPanel cameraPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-		cameraPanel.add(clipCameraButton);
-		cameraPanel.add(downloadCameraButton);
+		cameraPanel.add(new JLabel("Camera:"));
+		cameraPanel.add(clipCameraJButton);
+		cameraPanel.add(downloadCameraJButton);
 		
-		JButton downloadFileButton = new JButton("Download");
-		downloadFileButton.addActionListener(e -> {
+		JButton downloadFileJButton = new JButton("Download");
+		downloadFileJButton.addActionListener(e -> {
 
 		});
 
 		// Tạo nút dạng "file txt"
-		JButton fileButton = new JButton("Keyboard log"); // Biểu tượng file txt
-		fileButton.addActionListener(e -> {
+		JButton fileJButton = new JButton("Keyboard log"); // Biểu tượng file txt
+		fileJButton.addActionListener(e -> {
 			teacherController.showKeys(participant_id);
 		});
 		
 		JPanel filePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-		filePanel.add(fileButton);
-		filePanel.add(downloadFileButton);
+		filePanel.add(new JLabel("File: "));
+		filePanel.add(fileJButton);
+		filePanel.add(downloadFileJButton);
 
-		// Horizontal Group
+		// Horizontal Group: Các panel căn trái và cách lề ra một chút
 		detailFormLayout.setHorizontalGroup(
-		    detailFormLayout.createSequentialGroup()
-		        .addContainerGap()
+		    detailFormLayout
+		        .createSequentialGroup()
 		        .addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-		            .addComponent(backButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-		            .addGroup(detailFormLayout.createSequentialGroup()
-		                .addComponent(clipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-		                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-		                .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-		                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-		                .addComponent(filePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)))
-		        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-		);
-
-		// Vertical Group
-		detailFormLayout.setVerticalGroup(
-		    detailFormLayout.createSequentialGroup()
-		        .addContainerGap()
-		        .addComponent(backButton1) // Nút "Quay lại"
-		        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-		        .addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		            .addComponent(backJButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 		            .addComponent(clipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 		            .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 		            .addComponent(filePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+		        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE) // Để giữ khoảng cách phải
+		);
+
+
+		// Vertical Group: Các panel sẽ được xếp tuần tự từ trên xuống
+		detailFormLayout.setVerticalGroup(
+		    detailFormLayout.createSequentialGroup()
+		        .addContainerGap()
+		        .addComponent(backJButton1) // Nút "Quay lại" ở trên cùng
+		        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+		        .addComponent(clipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+		        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+		        .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+		        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+		        .addComponent(filePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 		        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		);
+
+
 
 
 
@@ -484,7 +503,7 @@ public class TeacherDashboard extends javax.swing.JFrame {
 	private javax.swing.JLabel camera;
 	private javax.swing.JButton capnhat;
 	private javax.swing.JPanel ctctForm;
-	private java.awt.Button dangxuat;
+	private javax.swing.JButton dangxuat;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JLabel jLabel2;
 	private javax.swing.JLabel jLabel3;
@@ -495,20 +514,22 @@ public class TeacherDashboard extends javax.swing.JFrame {
 	private javax.swing.JScrollPane jScrollPane4;
 	private javax.swing.JTextArea jTextArea1;
 	private javax.swing.JTextField tencuocthi;
-	private java.awt.Button lsct;
+	private javax.swing.JButton lsct;
 	private javax.swing.JPanel lsctForm;
 	private javax.swing.JTable lsct_jtable;
 	private javax.swing.JTable ctct_jtable;
 	private javax.swing.JButton lsct_xemchitiet;
 	private javax.swing.JPanel mainPanel;
 	private javax.swing.JLabel manhinh;
-	private java.awt.Button nguoidung;
+	private javax.swing.JButton nguoidung;
 	private javax.swing.JPanel nguoidungForm;
 	private javax.swing.JPasswordField password;
-	private java.awt.Button trangchu;
+	private javax.swing.JButton trangchu;
 	private javax.swing.JPanel trangchuForm;
 	private javax.swing.JButton trangchu_batdau;
+	private javax.swing.JButton xemtientrinhtai;
 	public Integer participant_id = null;
+	public String participant_name = null;
 
 	public static void main(String[] args) {
 		new TeacherDashboard(null);
