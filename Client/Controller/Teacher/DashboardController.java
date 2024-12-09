@@ -54,8 +54,8 @@ public class DashboardController {
 
 		VideoModel tmp = new VideoModel();
 
-		tmp.name = "Video của học sinh '" + view.participant_name + "' có id là '" + view.participant_id + "'";
-		tmp.label.setText(tmp.name + " | Tiến độ dữ liệu video từ Server: 0% | Tiến độ tải xuống video: 0%");
+		tmp.name = "Tải xuống bản ghi " + (typeVideo == 1 ? "camera" : "màn hình") + " của học sinh '" + view.participant_name + "' có id là '" + view.participant_id + "'";
+		tmp.label.setText(tmp.name + " | Tiến độ nhận dữ liệu video từ Server: 0% | Tiến độ tải xuống video: 0%");
 		
 		if (typeVideo == 1) {
 			camera = tmp;
@@ -118,7 +118,7 @@ public class DashboardController {
 			if(camera == null)
 				getVideoData(typeVideo);
 			else
-				camera.label.setText(camera.name + " | Tiến độ dữ liệu video từ Server: 100% | Tiến độ tải xuống video: 0%");
+				camera.label.setText(camera.name + " | Tiến độ nhận dữ liệu video từ Server: 100% | Tiến độ tải xuống video: 0%");
 			downloadProgress.addProgress(camera.label);
 			new DownloadVideoThread(camera).start();
 		}
@@ -126,7 +126,7 @@ public class DashboardController {
 			if(screen == null)
 				getVideoData(typeVideo);
 			else
-				screen.label.setText(screen.name + " | Tiến độ dữ liệu video từ Server: 100% | Tiến độ tải xuống video: 0%");
+				screen.label.setText(screen.name + " | Tiến độ nhận dữ liệu video từ Server: 100% | Tiến độ tải xuống video: 0%");
 			downloadProgress.addProgress(screen.label);
 			new DownloadVideoThread(screen).start();
 		}

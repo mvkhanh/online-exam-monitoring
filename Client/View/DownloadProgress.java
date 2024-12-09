@@ -46,19 +46,6 @@ public class DownloadProgress extends JFrame {
 	public void addProgress(JLabel label) {
 		listData.add(label);
 		view.add(label);
-		view.add(Box.createVerticalStrut(1));
-	}
-
-	public void removeProgress(JLabel label) {
-		int size = listData.size();
-		for (int i = 0; i < size; i++) {
-			if (listData.get(i) == label) {
-				listData.remove(i);
-				break;
-			}
-		}
-		view.remove(label);
-		view.revalidate();
-		view.repaint();
+		view.add(Box.createVerticalStrut(2));
 	}
 }
