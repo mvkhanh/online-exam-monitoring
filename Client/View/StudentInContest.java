@@ -1,6 +1,7 @@
 package pbl4.Client.View;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
@@ -23,12 +25,12 @@ public class StudentInContest extends JFrame implements NativeKeyListener {
 
 	public StudentController controller;
 	public ChatPanel chatPn;
+	public JLabel cameraScreen = new JLabel();
 
 	public StudentInContest(StudentController controller) {
 		this.controller = controller;
 		setLayout(new BorderLayout());
 
-		JLabel cameraScreen = new JLabel();
 		cameraScreen.setBounds(0, 0, 640, 480);
 
 		JPanel topPn = new JPanel(new FlowLayout());
@@ -72,8 +74,12 @@ public class StudentInContest extends JFrame implements NativeKeyListener {
 		});
 
 		chatPn = new ChatPanel(controller);
-
-		add(cameraScreen, BorderLayout.CENTER);
+		
+		JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		cameraScreen.setBorder(new LineBorder(Color.BLACK, 1));
+		centerPanel.add(cameraScreen);
+		
+		add(centerPanel, BorderLayout.CENTER);
 		add(topPn, BorderLayout.NORTH);
 		add(chatPn, BorderLayout.EAST);
 

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -63,7 +64,9 @@ public class SendThread extends Thread {
 		Mat matTemp = par.camImg;
 		MatOfByte buffer = new MatOfByte();
 		Imgcodecs.imencode(".jpg", matTemp, buffer);
-		return buffer.toArray();
+		byte[] data = buffer.toArray();
+		par.view.cameraScreen.setIcon(new ImageIcon(data));
+		return data;
 //		return null;
 	}
 }
