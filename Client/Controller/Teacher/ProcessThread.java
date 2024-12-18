@@ -8,12 +8,10 @@ import pbl4.Client.DTO.InContest.Teacher.Packet;
 
 public class ProcessThread extends Thread {
 	public static TeacherController par;
-	public static boolean isProcessing;
 	private boolean isFirst;
 
 	public ProcessThread(TeacherController par, boolean isFirst) {
 		ProcessThread.par = par;
-		isProcessing = false;
 		this.isFirst = isFirst;
 	}
 
@@ -55,8 +53,8 @@ public class ProcessThread extends Thread {
 				image.setTime(System.currentTimeMillis());
 				image.getData().put(packetNum, packet);
 			}
-			if (!isProcessing && isFirst) {
-				isProcessing = true;
+			if (isFirst) {
+				isFirst = false;
 				new CheckThread(par).start();
 				for (int i = 0; i < Constant.VIEW_THREADS; i++) {
 					new ViewThread(par).start();

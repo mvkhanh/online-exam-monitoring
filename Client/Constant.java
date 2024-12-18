@@ -29,9 +29,13 @@ public class Constant {
 	public static final int IMAGE_SEGMENT = 1100;
 	public static final int MAX_SCREENS = 4;
 	public static final int MAX_CAMS = 8;
+	public static int camWidth;
+	public static int camHeight;
+	public static int screenWidth;
+	public static int screenHeight;
 	
 	//Teacher
 	public static final int PROCESS_THREADS = 3;
-	public static final int VIEW_THREADS = 2;
+	public static final int VIEW_THREADS = 1;
 	public static final long TIMEOUT = 4;
 }

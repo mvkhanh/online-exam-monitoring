@@ -15,22 +15,33 @@ public class ViewThread extends Thread {
 
 	public void run() {
 		while (par.running) {
-			try {
-				for(int i = 0; i < par.viewList.size(); i++) {
-					if(par.viewList.get(i) != null) {
-						ImageModel tmp = par.viewList.get(i);
-						par.viewList.set(i, null);
-						byte[] completeData = assemblePackets(tmp.getData());
-						par.setImage(completeData, i);
-					}
-				}
+			if(par.viewList.size() == 0) {
 				try {
+					System.out.println("Doneaaaaaaaaaaaaaaaaaaaa");
 					Thread.sleep(0, 1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			}
+			try {
+				for(int i = 0; i < par.viewList.size(); i++) {
+					if(par.viewList.get(i) != null) {
+						long start = System.nanoTime();
+						ImageModel tmp = par.viewList.get(i);
+						par.viewList.set(i, null);
+						byte[] completeData = assemblePackets(tmp.getData());
+						par.setImage(completeData, i);
+						System.out.println(System.nanoTime() - start);
+					}
+				}
+//				try {
+//					Thread.sleep(1);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			} catch (NullPointerException e) {
-
+				e.printStackTrace();
 			}
 		}
 	}

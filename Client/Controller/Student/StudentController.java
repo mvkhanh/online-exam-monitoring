@@ -1,10 +1,13 @@
 package pbl4.Client.Controller.Student;
 
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.Socket;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import pbl4.Client.Constant;
 import pbl4.Client.Controller.InContestBaseController;
@@ -20,8 +23,11 @@ public class StudentController extends InContestBaseController {
 
 	public StudentInContest view;
 	public ScreenImageDTO imgModel = new ScreenImageDTO(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
+	public Queue<BufferedImage> screenQueue = new ConcurrentLinkedQueue<BufferedImage>();
 //	public Size camDim = new Size(Constant.NORMAL_WIDTH, Constant.NORMAL_HEIGHT);
 //	public Mat camImg = new Mat();
+//	public Mat frame = new Mat();
+//	public Queue<Mat> camQueue = new ConcurrentLinkedQueue<Mat>();
 	public String currKeys = "";
 
 	public StudentController() {
@@ -46,38 +52,40 @@ public class StudentController extends InContestBaseController {
 				res = res.substring(i + 1);
 				this.roomId = roomId;
 				this.name = name;
-			}
-			else res = null;
+			} else
+				res = null;
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		return res;
 	}
-	
+
 	public void startThreads() {
 		new CaptureThread(this, true).start();
 //		new CaptureThread(this, false).start();
 		new SendThread(this, true).start();
 //		new SendThread(this, false).start();
+//		new SaveVideoThread(this, true).start();
+//		new SaveVideoThread(this, false).start();
 		new LiveThread(this).start();
 	}
-	
+
 	public void handleFocus(int width, int height) {
 		ScreenImageDTO img = new ScreenImageDTO(width, height);
 		ScreenImageDTO curr = imgModel;
 		imgModel = img;
 		curr.g2d.dispose();
 	}
-	
+
 	public void addText(String txt) {
 		view.addText(txt);
 	}
-	
+
 	public void endStream() {
 		view.dispose();
-		new Home().setVisible(true);;
+		new Home().setVisible(true);
 	}
-	
+
 	public void back() {
 		view.dispose();
 		new Home().setVisible(true);

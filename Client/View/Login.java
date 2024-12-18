@@ -29,8 +29,8 @@ public class Login extends javax.swing.JFrame {
     private void initComponents() {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        password = new javax.swing.JPasswordField();
-        username = new javax.swing.JTextField();
+        password = new javax.swing.JPasswordField("123");
+        username = new javax.swing.JTextField("teacher123");
         login = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         register = new javax.swing.JButton();
@@ -122,7 +122,13 @@ public class Login extends javax.swing.JFrame {
 
         pack();
     	setLocationRelativeTo(null);
-
+    	
+    	try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }                     
 
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {                                      

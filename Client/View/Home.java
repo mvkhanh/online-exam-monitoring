@@ -34,7 +34,7 @@ public class Home extends javax.swing.JFrame {
 		jLabel1.setText("Tiếp tục với tư cách:");
 		jPanel1.add(jLabel1);
 
-		giaovien.setText("Giáo viên");
+		giaovien.setText("Giám thị");
 		giaovien.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				giaovienActionPerformed(evt);
@@ -42,7 +42,7 @@ public class Home extends javax.swing.JFrame {
 		});
 		jPanel1.add(giaovien);
 
-		hocsinh.setText("Học sinh");
+		hocsinh.setText("Thí sinh");
 		hocsinh.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				hocsinhActionPerformed(evt);
