@@ -5,8 +5,11 @@
 package pbl4.Client.View;
 
 import java.awt.CardLayout;
+import java.awt.Image;
+import java.net.URL;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,13 +28,13 @@ import pbl4.Client.DTO.OutContest.TestTableModel;
 public class TeacherDashboard extends javax.swing.JFrame {
 
 	pbl4.Client.Controller.Teacher.DashboardController teacherController;
-	
+
 	public TeacherDashboard(pbl4.Client.Controller.Teacher.DashboardController teacherController) {
 		initComponents();
-		
+
 		this.teacherController = teacherController;
 	}
-	
+
 	private void initComponents() {
 		jPanel1 = new javax.swing.JPanel();
 		jLabel1 = new javax.swing.JLabel();
@@ -146,6 +149,32 @@ public class TeacherDashboard extends javax.swing.JFrame {
 
 		getContentPane().add(jPanel1, java.awt.BorderLayout.LINE_START);
 
+		jPanel1.setBackground(java.awt.Color.decode("#e6f7ff")); // Xám nhạt
+
+		try {
+			URL imageUrl = new URL(
+					"https://static.vecteezy.com/system/resources/previews/000/439/863/non_2x/vector-users-icon.jpg");
+			ImageIcon originalIcon = new ImageIcon(imageUrl); // Tải ảnh từ URL
+
+			// Thêm ComponentListener để đợi JLabel sẵn sàng
+			jLabel1.addComponentListener(new java.awt.event.ComponentAdapter() {
+				@Override
+				public void componentResized(java.awt.event.ComponentEvent evt) {
+					// Thay đổi kích thước hình ảnh khi JLabel đã được hiển thị
+					int width = jLabel1.getWidth();
+					int height = jLabel1.getHeight();
+					if (width > 0 && height > 0) {
+						Image scaledImage = originalIcon.getImage().getScaledInstance(width, height,
+								Image.SCALE_SMOOTH);
+						ImageIcon resizedIcon = new ImageIcon(scaledImage);
+						jLabel1.setIcon(resizedIcon);
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace(); // Xử lý nếu có lỗi xảy ra
+		}
+
 		mainPanel.setBackground(new java.awt.Color(51, 51, 51));
 		mainPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 		mainPanel.setName(""); // NOI18N
@@ -163,23 +192,37 @@ public class TeacherDashboard extends javax.swing.JFrame {
 			}
 		});
 
+		// Tăng kích thước font chữ
+		tencuocthi.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 15)); // Font Arial, kiểu chữ thường, cỡ 18
+		trangchu_batdau.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 15)); // Font Arial, kiểu chữ đậm, cỡ 18
+
 		javax.swing.GroupLayout trangchuFormLayout = new javax.swing.GroupLayout(trangchuForm);
 		trangchuForm.setLayout(trangchuFormLayout);
 		trangchuFormLayout
-				.setHorizontalGroup(trangchuFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(trangchuFormLayout.createSequentialGroup().addGap(234, 234, 234)
-								.addComponent(tencuocthi, javax.swing.GroupLayout.PREFERRED_SIZE, 314,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(trangchu_batdau).addContainerGap(226, Short.MAX_VALUE)));
+				.setHorizontalGroup(
+						trangchuFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(trangchuFormLayout.createSequentialGroup().addGap(234, 234, 234)
+										.addComponent(tencuocthi, javax.swing.GroupLayout.PREFERRED_SIZE, 350, // Tăng
+																												// chiều
+																												// rộng
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(trangchu_batdau, javax.swing.GroupLayout.PREFERRED_SIZE, 100, // Tăng
+																													// chiều
+																													// rộng
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addContainerGap(180, Short.MAX_VALUE))); // Giảm containerGap để bù kích thước
+																					// tăng
 		trangchuFormLayout.setVerticalGroup(trangchuFormLayout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(trangchuFormLayout.createSequentialGroup().addGap(246, 246, 246)
 						.addGroup(trangchuFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(tencuocthi, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(trangchu_batdau))
-						.addContainerGap(345, Short.MAX_VALUE)));
+								.addComponent(tencuocthi, javax.swing.GroupLayout.PREFERRED_SIZE, 30, // Tăng chiều cao
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(trangchu_batdau, javax.swing.GroupLayout.PREFERRED_SIZE, 30, // Tăng chiều
+																											// cao
+										javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addContainerGap(340, Short.MAX_VALUE)));
 
 		mainPanel.add(trangchuForm, "TrangChu");
 
@@ -272,7 +315,7 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		jTextArea1.setColumns(20);
 		jTextArea1.setRows(5);
 		jScrollPane4.setViewportView(jTextArea1);
-		
+
 		javax.swing.GroupLayout ctctFormLayout = new javax.swing.GroupLayout(ctctForm);
 		ctctForm.setLayout(ctctFormLayout);
 
@@ -282,14 +325,14 @@ public class TeacherDashboard extends javax.swing.JFrame {
 
 		// Thêm sự kiện cho nút quay lại
 		backButton.addActionListener(e -> {
-		    cardLayout.show(mainPanel, "LSCT");
+			cardLayout.show(mainPanel, "LSCT");
 		});
-		
+
 		// Thêm sự kiện cho nút xem chi tiết
 		detailsButton.addActionListener(e -> {
 			int row = ctct_jtable.getSelectedRow();
 			participant_id = ptcp_model.getParticipantAt(row).getId();
-		    cardLayout.show(mainPanel, "DetailForm");
+			cardLayout.show(mainPanel, "DetailForm");
 		});
 
 		// Tạo bảng với ParticipantTableModel
@@ -297,32 +340,27 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		JScrollPane tableScrollPane = new JScrollPane(ctct_jtable);
 
 		// Thiết lập bố cục ngang
-		ctctFormLayout.setHorizontalGroup(
-		    ctctFormLayout.createSequentialGroup()
-		        .addContainerGap()
-		        .addGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-		            .addGroup(ctctFormLayout.createSequentialGroup()
-		                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-		                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-		                .addComponent(detailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-		            .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
-		        .addContainerGap()
-		);
+		ctctFormLayout.setHorizontalGroup(ctctFormLayout.createSequentialGroup().addContainerGap()
+				.addGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(ctctFormLayout.createSequentialGroup()
+								.addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(detailsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+										javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
+				.addContainerGap());
 
 		// Thiết lập bố cục dọc
-		ctctFormLayout.setVerticalGroup(
-		    ctctFormLayout.createSequentialGroup()
-		        .addContainerGap()
-		        .addGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-		            .addComponent(backButton)
-		            .addComponent(detailsButton))
-		        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-		        .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-		        .addContainerGap()
-		);
+		ctctFormLayout.setVerticalGroup(ctctFormLayout.createSequentialGroup().addContainerGap()
+				.addGroup(ctctFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+						.addComponent(backButton).addComponent(detailsButton))
+				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+				.addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+				.addContainerGap());
 
 		mainPanel.add(ctctForm, "CTCT");
-		
+
 		JPanel detailForm = new JPanel();
 		javax.swing.GroupLayout detailFormLayout = new javax.swing.GroupLayout(detailForm);
 		detailForm.setLayout(detailFormLayout);
@@ -330,13 +368,13 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		// Tạo nút "Quay lại"
 		JButton backButton1 = new JButton("Quay lại");
 		backButton1.addActionListener(e -> {
-		    cardLayout.show(mainPanel, "CTCT"); // Quay lại màn hình "CTCT"
+			cardLayout.show(mainPanel, "CTCT"); // Quay lại màn hình "CTCT"
 		});
 
 		// Tạo nút dạng "clip"
 		JButton clipButton = new JButton("Record screen"); // Biểu tượng clip
 		clipButton.addActionListener(e -> {
-		    
+
 		});
 
 		// Tạo nút dạng "file txt"
@@ -346,30 +384,24 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		});
 
 		// Thiết lập bố cục ngang
-		detailFormLayout.setHorizontalGroup(
-		    detailFormLayout.createSequentialGroup()
-		        .addContainerGap()
-		        .addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-		            .addGroup(detailFormLayout.createSequentialGroup()
-		                .addComponent(backButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-		            .addGroup(detailFormLayout.createSequentialGroup()
-		                .addComponent(clipButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-		                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-		                .addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-		        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-		);
+		detailFormLayout.setHorizontalGroup(detailFormLayout.createSequentialGroup().addContainerGap()
+				.addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(detailFormLayout.createSequentialGroup().addComponent(backButton1,
+								javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addGroup(detailFormLayout.createSequentialGroup()
+								.addComponent(clipButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
+										javax.swing.GroupLayout.PREFERRED_SIZE)))
+				.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
 		// Thiết lập bố cục dọc
-		detailFormLayout.setVerticalGroup(
-		    detailFormLayout.createSequentialGroup()
-		        .addContainerGap()
-		        .addComponent(backButton1)
-		        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-		        .addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-		            .addComponent(clipButton)
-		            .addComponent(fileButton))
-		        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-		);
+		detailFormLayout.setVerticalGroup(detailFormLayout.createSequentialGroup().addContainerGap()
+				.addComponent(backButton1).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+				.addGroup(detailFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+						.addComponent(clipButton).addComponent(fileButton))
+				.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
 		// Thêm form này vào mainPanel
 		mainPanel.add(detailForm, "DetailForm");
@@ -377,7 +409,7 @@ public class TeacherDashboard extends javax.swing.JFrame {
 		getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
 		this.setVisible(true);
-		
+
 		pack();
 		setLocationRelativeTo(null);
 
@@ -421,7 +453,7 @@ public class TeacherDashboard extends javax.swing.JFrame {
 
 		if (selectedRow != -1) {
 			Test selectedTest = lsct_model.getTestAt(selectedRow);
-			int test_id = selectedTest.getId(); 
+			int test_id = selectedTest.getId();
 			cardLayout.show(mainPanel, "CTCT");
 			List<Participant> data = teacherController.getListParticipant(test_id);
 			ptcp_model = new ParticipantTableModel(data);
