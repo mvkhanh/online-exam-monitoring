@@ -5,11 +5,15 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 public class ParticipantTableModel extends AbstractTableModel {
+	public int test_id;
+	public String test_name;
 	private List<Participant> data;
 	private final String[] columnNames = { "ID", "Name"};
 
-	public ParticipantTableModel(List<Participant> data) {
+	public ParticipantTableModel(List<Participant> data, int test_id, String test_name) {
 		this.data = data;
+		this.test_id = test_id;
+		this.test_name = test_name;
 	}
 
 	@Override

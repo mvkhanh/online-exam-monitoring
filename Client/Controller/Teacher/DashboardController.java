@@ -54,7 +54,7 @@ public class DashboardController {
 
 		VideoModel tmp = new VideoModel();
 
-		tmp.name = "Tải xuống bản ghi " + (typeVideo == 1 ? "camera" : "màn hình") + " của học sinh '" + view.participant_name + "' có id là '" + view.participant_id + "'";
+		tmp.name = "Tải xuống bản ghi " + (typeVideo == 1 ? "camera" : "màn hình") + " của học sinh '" + view.participant_name + "' có id là '" + view.participant_id + "' trong contest '" + view.ptcp_model.test_name + "'";
 		tmp.label.setText(tmp.name + " | Tiến độ nhận dữ liệu video từ Server: 0% | Tiến độ tải xuống video: 0%");
 		
 		if (typeVideo == 1) {
