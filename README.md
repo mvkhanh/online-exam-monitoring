@@ -82,30 +82,5 @@ The **Online Exam Monitoring System** is a multithreaded Java application that u
      ```bash
      java -cp lib/*: src/client/ClientMain.java
      ```
-
+     
 ---
-
-## **Future Improvements**
-
-- Add support for distributed server architecture for large-scale exams.
-- Enhance the user interface with modern JavaFX components.
-- Incorporate AI-based cheating detection (e.g., facial recognition, anomaly detection in keyboard logs).
-
----
-
-## **Why This Project?**
-
-This project reflects my ability to:
-- Build robust and scalable networking applications.
-- Design and implement real-time monitoring solutions.
-- Combine various libraries and technologies (OpenCV, JNativeHook, FFmpeg) into a cohesive system.
-
-If you're a recruiter viewing this project as part of my CV, I would love to discuss how I can bring my skills to your team!
-
----
-
-## **Contact Me**
-
-Feel free to reach out if you have any questions or feedback:  
-📧 **your-email@example.com**  
-🌐 [LinkedIn](https://linkedin.com/in/your-profile)  
