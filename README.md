@@ -82,5 +82,3 @@ The **Online Exam Monitoring System** is a multithreaded Java application that u
      ```bash
      java -cp lib/*: src/client/ClientMain.java
      ```
-     
----
