@@ -71,7 +71,7 @@ The **Online Exam Monitoring System** is a multithreaded Java application that u
 2. **Setup**:
    - Clone the repository:
      ```bash
-     git clone https://github.com/your-username/online-exam-monitoring.git
+     git clone https://github.com/mvkhanh/online-exam-monitoring.git
      cd online-exam-monitoring
      ```
    - Compile and run the server:
