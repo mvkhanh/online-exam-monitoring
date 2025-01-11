@@ -76,9 +76,9 @@ The **Online Exam Monitoring System** is a multithreaded Java application that u
      ```
    - Compile and run the server:
      ```bash
-     java -cp lib/*: src/server/ServerMain.java
+     java -cp lib/*: src/server/Main.java
      ```
    - Compile and run the client (as an invigilator or student):
      ```bash
-     java -cp lib/*: src/client/ClientMain.java
+     java -cp lib/*: src/client/Main.java
      ```
