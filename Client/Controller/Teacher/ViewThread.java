@@ -17,7 +17,6 @@ public class ViewThread extends Thread {
 		while (par.running) {
 			if(par.viewList.size() == 0) {
 				try {
-					System.out.println("Doneaaaaaaaaaaaaaaaaaaaa");
 					Thread.sleep(0, 1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -26,12 +25,12 @@ public class ViewThread extends Thread {
 			try {
 				for(int i = 0; i < par.viewList.size(); i++) {
 					if(par.viewList.get(i) != null) {
-						long start = System.nanoTime();
+//						long start = System.nanoTime();
 						ImageModel tmp = par.viewList.get(i);
 						par.viewList.set(i, null);
 						byte[] completeData = assemblePackets(tmp.getData());
 						par.setImage(completeData, i);
-						System.out.println(System.nanoTime() - start);
+//						System.out.println(System.nanoTime() - start);
 					}
 				}
 //				try {

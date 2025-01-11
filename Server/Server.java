@@ -48,7 +48,7 @@ class UDPServer implements Runnable {
 
 		try (DatagramSocket udpSocket = new DatagramSocket(Constant.UDP_PORT)) {
 			while (true) {
-				try {
+				try { //100000
 					byte[] receiveData = new byte[Constant.PACKET_SIZE];
 					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 					udpSocket.receive(receivePacket);

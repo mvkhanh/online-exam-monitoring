@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBHelper {
-	private final String dbName = "PBL4_2";
+	private final String dbName = "PBL4";
 	private final String userID = "root";
 	private final String password = "";
 	private final String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
